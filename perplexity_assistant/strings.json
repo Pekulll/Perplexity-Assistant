@@ -1,0 +1,35 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Perplexity Assistant Configuration",
+                "description": "Configure the Perplexity Assistant integration. To get started, you'll need an API key from Perplexity AI. You can obtain one by visiting ``https://platform.perplexity.ai/``.",
+                "data": {
+                    "api_key": "API Key for Perplexity Assistant",
+                    "model": "Model to use for queries (default: sonar-small-online)",
+                    "language": "Language for responses (default: EN)"
+                }
+            }
+        },
+        "error": {
+            "invalid_api_key": "The provided API key is invalid. Please check and try again.",
+            "cannot_connect": "Unable to connect to Perplexity AI service. Please check your internet connection and try again.",
+            "unknown": "An unknown error occurred. Please try again later."
+        },
+        "abort": {
+            "single_instance_allowed": "Only a single instance of Perplexity Assistant is allowed."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Perplexity Assistant Options",
+                "description": "Adjust the settings for the Perplexity Assistant integration.",
+                "data": {
+                    "model": "Model to use for queries (default: sonar-small-online)",
+                    "language": "Language for responses (default: EN)"
+                }
+            }
+        }
+    }
+}
