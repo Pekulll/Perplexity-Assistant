@@ -7,9 +7,11 @@
                     "model": "Modèle (par défaut : sonar)",
                     "language": "Langue (par défaut : EN)",
                     "notify_response": "Notifier la réponse à chaque requête",
-                    "custom_system_prompt": "Instructions personnalisées"
+                    "custom_system_prompt": "Instructions personnalisées",
+                    "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
+                    "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant"
                 },
-                "description": "Pour utiliser Perplexity AI, vous devez générer une clé API via [Perplexity](https://platform.perplexity.ai)."
+                "description": "Pour utiliser Perplexity AI, vous devez générer une clé API via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             }
         },
         "error": {
@@ -29,7 +31,9 @@
                     "model": "Modèle (par défaut : sonar-small-online)",
                     "language": "Langue (par défaut : EN)",
                     "notify_response": "Notifier la réponse à chaque requête",
-                    "custom_system_prompt": "Instructions personnalisées"
+                    "custom_system_prompt": "Instructions personnalisées",
+                    "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
+                    "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant"
                 },
                 "description": "Modifier les paramètres d'intégration"
             }

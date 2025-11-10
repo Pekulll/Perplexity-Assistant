@@ -4,7 +4,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.selector import SelectSelector
 
-from .const import CONF_CUSTOM_SYSTEM_PROMPT, CONF_NOTIFY_RESPONSE, DOMAIN, CONF_API_KEY, CONF_MODEL, CONF_LANGUAGE, DEFAULT_MODEL, DEFAULT_LANGUAGE, SUPPORTED_MODELS, SUPPORTED_LANGUAGES
+from .const import CONF_ALLOW_ENTITIES_ACCESS, CONF_CUSTOM_SYSTEM_PROMPT, CONF_NOTIFY_RESPONSE, DOMAIN, CONF_API_KEY, CONF_MODEL, CONF_LANGUAGE, DEFAULT_MODEL, DEFAULT_LANGUAGE, SUPPORTED_MODELS, SUPPORTED_LANGUAGES, CONF_ALLOW_ACTIONS_ON_ENTITIES
 
 
 # User input schema: only the API key is requested.
@@ -34,7 +34,12 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors[CONF_API_KEY] = "invalid_api_key"
             else:
                 # If the API key is valid, create the config entry
-                return self.async_create_entry(title=f"Perplexity Assistant - {user_input.get('language', DEFAULT_LANGUAGE).upper()}", data=user_input)
+                # Store a flag so the integration can create a credit sensor in async_setup_entry
+                data = {**user_input, "create_credit_sensor": True}
+                return self.async_create_entry(
+                    title=f"Perplexity Assistant - {user_input.get(CONF_LANGUAGE, DEFAULT_LANGUAGE).upper()}",
+                    data=data,
+                )
 
         STEP_USER_DATA_SCHEMA = vol.Schema({
             vol.Required(CONF_API_KEY): vol.All(str, vol.Length(min=53, max=53)),
@@ -42,6 +47,8 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Optional(CONF_MODEL, default=DEFAULT_MODEL): SelectSelector({"options": SUPPORTED_MODELS, "mode": "dropdown"}),
             vol.Optional(CONF_CUSTOM_SYSTEM_PROMPT, default=""): vol.All(str, vol.Length(max=250)),
             vol.Optional(CONF_NOTIFY_RESPONSE, default=False): vol.All(bool),
+            vol.Optional(CONF_ALLOW_ENTITIES_ACCESS, default=False): vol.All(bool),
+            vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=False): vol.All(bool),
         })
         
         # Otherwise, show the form
@@ -99,6 +106,8 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
         current_language = config_entry.options.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
         current_notify_response = config_entry.options.get(CONF_NOTIFY_RESPONSE, False)
         current_custom_system_prompt = config_entry.options.get(CONF_CUSTOM_SYSTEM_PROMPT, "")
+        current_allow_entities_access = config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, False)
+        current_allow_actions_on_entities = config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
 
         options_schema = vol.Schema({
             vol.Required(CONF_API_KEY, default=current_api_key): vol.All(str, vol.Length(min=53, max=53)),
@@ -106,6 +115,8 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Optional(CONF_MODEL, default=current_model): SelectSelector({"options": SUPPORTED_MODELS, "mode": "dropdown"}),
             vol.Optional(CONF_CUSTOM_SYSTEM_PROMPT, default=current_custom_system_prompt): vol.All(str, vol.Length(max=250)),
             vol.Optional(CONF_NOTIFY_RESPONSE, default=current_notify_response): vol.All(bool),
+            vol.Optional(CONF_ALLOW_ENTITIES_ACCESS, default=current_allow_entities_access): vol.All(bool),
+            vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=current_allow_actions_on_entities): vol.All(bool),
         })
 
         return self.async_show_form(

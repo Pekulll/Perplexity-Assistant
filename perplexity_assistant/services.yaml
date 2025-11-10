@@ -1,8 +1,21 @@
 ask_perplexity:
-  name: Ask Perplexity AI
+  name: Ask Perplexity Assistant
   description: Sends a manual request to the Perplexity AI assistant.
   fields:
-    question:
-      description: Text to send to the API.
+    prompt:
       example: What is the weather like in Paris?
+      default: What is the weather like in Paris?
       required: true
+  advanced_fields:
+    model:
+      example: sonar
+      default: sonar
+      required: false
+      selector:
+        select:
+          options:
+            - sonar
+            - sonar-pro
+            - sonar-reasoning
+            - sonar-reasoning-pro
+            - sonar-deep-research
