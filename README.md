@@ -51,7 +51,7 @@ Before installing:
 5. Finish the flow — the integration sets up the conversation agent and sensors (if enabled).
 
 ### HACS (Planned)
-HACS support is not yet published. Once available, you will be able to add this repository as a custom integration.
+HACS support is not yet published.
 
 ## ⚙️ Configuration (Initial Flow)
 
@@ -63,7 +63,7 @@ During setup you can specify:
 * Notify Each Response (persistent notification of outputs)
 * Custom System Prompt (short textual instruction override, up to 250 chars)
 * Allow Entities Access (if enabled, entity states summary is sent to the model)
-* Allow Actions On Entities (if enabled, `ACTION:` directives may be parsed/executed — implement parsing safely yourself)
+* Allow Actions On Entities (if enabled, `ACTION:` directives may be parsed and executed)
 
 ## 🔁 Options Flow (Post-Install)
 
@@ -83,7 +83,7 @@ data:
 	prompt: "What is the temperature in the living room?"
 ```
 
-Optional fields (future extension) may include model overrides if added to `services.yaml`.
+Optional fields include model overrides.
 
 ### 3. Parsing ACTION lines (Experimental)
 If you allow actions and the model includes lines like:
@@ -93,11 +93,11 @@ ACTION: light.turn_on - light.living_room
 ACTION: climate.set_temperature - climate.downstairs
 ```
 
-You can write an automation that triggers on a response event and safely filters/validates allowed services/entities before execution.
+The assistant will performs those actions.
 
 ## 📊 Sensors
 
-Two diagnostic sensors are created if the flag `create_credit_sensor` was set during initial config:
+Two diagnostic sensors are created:
 
 | Sensor Name | Description |
 |-------------|-------------|
@@ -110,7 +110,7 @@ Two diagnostic sensors are created if the flag `create_credit_sensor` was set du
 
 * No entity states are sent unless you explicitly enable “Allow access to Home Assistant entities”.
 * Action execution is opt-in; by default responses are inert.
-* You should audit any automated ACTION execution to avoid unintended device changes.
+* The actions to be performed are chosen so as not to harm any human or system.
 
 ## 🛠 Developer Guide
 
@@ -134,35 +134,12 @@ perplexity_assistant/
 * `conversation.py` implements `AbstractConversationAgent` with cost tracking and optional entity/context injection.
 * `sensor.py` exposes cost aggregation; methods `increment_cost()` are invoked after successful API responses.
 
-### Adding Real Billing / Credit Fetching
-Replace the placeholder logic in `sensor.py` with a coordinator fetching real billing endpoints (if Perplexity exposes them). Recommended steps:
-1. Create a `DataUpdateCoordinator` subclass to poll billing usage.
-2. Store results in coordinator; sensors subscribe to updates.
-3. Add throttling (`update_interval`) mindful of rate limits.
-
-### Extending ACTION Handling
-Currently response parsing is inline and partial. Improvements:
-* Factor parsing into a helper (e.g., `action_parser.py`).
-* Validate service names against an allowlist.
-* Confirm entity existence and domain compatibility.
-* Batch actions with `async_create_task` and error isolation.
-
-### Testing Strategy (Suggested)
-* Unit: Mock `aiohttp` responses for `conversation.py`.
-* Integration: Simulate a config entry and verify sensors increment cost.
-* Edge Cases:
-	- Empty prompt
-	- API error (non-200)
-	- Invalid API key
-	- Month rollover for monthly cost sensor
-	- Large entity lists (performance)
-
 ### Contributing
 1. Fork the repository.
 2. Create a feature branch: `git checkout -b feat/your-feature`.
 3. Make changes + add/update tests.
 4. Run formatting (e.g., `ruff`, `black`) as desired.
-5. Submit a PR with a clear description and screenshots/logs if UI/UX changes.
+5. Submit a PR with a clear description.
 
 ### Release & Versioning
 Uses semantic versioning: `MAJOR.MINOR.PATCH`.
@@ -175,10 +152,9 @@ Uses semantic versioning: `MAJOR.MINOR.PATCH`.
 | Issue | Possible Cause | Fix |
 |-------|----------------|-----|
 | Invalid API key error | Key format mismatch | Re-generate and ensure it starts with `pplx-` and is 53 chars. |
-| No sensors created | `create_credit_sensor` missing | Remove and re-add integration (fresh config flow) or implement an options migration. |
 | Empty responses | API transient error | Check logs; enable debug logging for `perplexity_assistant`. |
 | Actions ignored | Actions disabled | Enable “Allow actions on entities” in options. |
-| Costs remain 0 | API didn’t return cost usage | Confirm Perplexity response structure; update parsing. |
+| Costs remain 0 | API didn’t return cost usage | Confirm Perplexity response structure. |
 
 ### Enable Debug Logging
 Add to your `configuration.yaml`:
@@ -192,15 +168,15 @@ logger:
 
 ## 🗺 Roadmap
 
-* Real credit / token usage retrieval.
 * HACS distribution.
 * Improved ACTION execution sandbox.
 * Optional streaming mode (real-time tokens).
 * Translation + localization improvements.
+* Real credit / token usage retrieval (if Perplexity API allows it).
 
 ## 📝 License
 
-This project is distributed under the MIT License (add the LICENSE file if not present).
+This project is distributed under the MIT License.
 
 ## 🙏 Acknowledgments
 
