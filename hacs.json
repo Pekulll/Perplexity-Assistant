@@ -1,0 +1,5 @@
+{
+  "name": "Perplexity Assistant",
+  "content_in_root": true,
+  "homeassistant": "2025.10.0"
+}
