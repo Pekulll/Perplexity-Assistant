@@ -39,7 +39,6 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
     _attr_native_unit_of_measurement = "$"
     
     _attr_name = "Monthly Cost"
-    _attr_native_unit_of_measurement = "$"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
@@ -61,9 +60,9 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
             
             last_attrs = last_state.attributes or {}
             
-            if "last_reset" in last_attrs:
+            if "last_reset_month" in last_attrs:
                 try:
-                    self._last_reset = datetime.fromisoformat(last_attrs["last_reset"])
+                    self._last_reset = datetime.fromisoformat(last_attrs["last_reset_month"])
                 except Exception:
                     _LOGGER.warning("Failed to parse last_reset timestamp")
         else:
@@ -111,7 +110,6 @@ class AlltimeBillSensor(SensorEntity, RestoreEntity):
     _attr_native_unit_of_measurement = "$"
     
     _attr_name = "Total Cost"
-    _attr_native_unit_of_measurement = "$"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:

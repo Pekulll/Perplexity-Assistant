@@ -94,15 +94,15 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
 
         # Show the form to update options
         config_entry: ConfigEntry = self.hass.config_entries.async_get_entry(self.config_entry_id)
-        current_api_key: str = config_entry.options.get(CONF_API_KEY, "")
-        current_model: str = config_entry.options.get(CONF_MODEL, DEFAULT_MODEL)
-        current_language: str = config_entry.options.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-        current_custom_system_prompt: str = config_entry.options.get(CONF_CUSTOM_SYSTEM_PROMPT, "")
-        current_entities_summary_refresh_rate: int = config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE)
-        current_enable_websearch: bool = config_entry.options.get(CONF_ENABLE_WEBSEARCH, False)
-        current_allow_entities_access: bool = config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, False)
-        current_allow_actions_on_entities: bool = config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
-        current_notify_response: bool = config_entry.options.get(CONF_NOTIFY_RESPONSE, False)
+        current_api_key: str = config_entry.options.get(CONF_API_KEY) or config_entry.data.get(CONF_API_KEY, "")
+        current_model: str = config_entry.options.get(CONF_MODEL) or config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
+        current_language: str = config_entry.options.get(CONF_LANGUAGE) or config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+        current_custom_system_prompt: str = config_entry.options.get(CONF_CUSTOM_SYSTEM_PROMPT) or config_entry.data.get(CONF_CUSTOM_SYSTEM_PROMPT, "")
+        current_entities_summary_refresh_rate: int = config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE) or config_entry.data.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE)
+        current_enable_websearch: bool = config_entry.options.get(CONF_ENABLE_WEBSEARCH) or config_entry.data.get(CONF_ENABLE_WEBSEARCH, False)
+        current_allow_entities_access: bool = config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS) or config_entry.data.get(CONF_ALLOW_ENTITIES_ACCESS, False)
+        current_allow_actions_on_entities: bool = config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES) or config_entry.data.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
+        current_notify_response: bool = config_entry.options.get(CONF_NOTIFY_RESPONSE) or config_entry.data.get(CONF_NOTIFY_RESPONSE, False)
 
         # Define the options schema with current values as defaults
         options_schema = vol.Schema({
