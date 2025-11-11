@@ -139,11 +139,11 @@ class PerplexityAgent(AbstractConversationAgent):
         entities_summary: str = "Access not allowed." if not self.allow_entities_access else self._generate_entities_summary()
     
         prompt: str = user_input.text
-        user_name = "UNKNOW"
+        user_name = "UNKNOWN"
 
         if user_input.context and user_input.context.user_id:
             user = await self.hass.auth.async_get_user(user_input.context.user_id)
-            user_name = user.name if user else "UNKNOW"
+            user_name = user.name if user else "UNKNOWN"
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -208,8 +208,10 @@ class PerplexityAgent(AbstractConversationAgent):
                         if content.actions and self.allow_actions_on_entities:
                             for action in content.actions:
                                 _LOGGER.debug(f"Executing action from Perplexity response: {action.domain}.{action.service} on {action.target} with parameters {action.parameters}")
-                                try: await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
-                                except Exception as e: _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
+                                try:
+                                    await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
+                                except Exception as e:
+                                    _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
                         
 
                     response = IntentResponse(language=self.language)

@@ -1,6 +1,5 @@
 {
   "name": "Perplexity Assistant",
   "content_in_root": true,
-  "filename": "my_super_awesome_thing.js",
   "homeassistant": "2025.10.0"
 }

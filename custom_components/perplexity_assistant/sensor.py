@@ -54,14 +54,18 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
         last_state = await self.async_get_last_state()
         
         if last_state and last_state.state not in (None, "unknown", "unavailable"):
-            try: self._attr_native_value = float(last_state.state)
-            except ValueError: self._attr_native_value = 0.0
+            try:
+                self._attr_native_value = float(last_state.state)
+            except ValueError:
+                self._attr_native_value = 0.0
             
             last_attrs = last_state.attributes or {}
             
             if "last_reset" in last_attrs:
-                try: self._last_reset = datetime.fromisoformat(last_attrs["last_reset"])
-                except Exception: _LOGGER.warning("Failed to parse last_reset timestamp")
+                try:
+                    self._last_reset = datetime.fromisoformat(last_attrs["last_reset"])
+                except Exception:
+                    _LOGGER.warning("Failed to parse last_reset timestamp")
         else:
             self._attr_native_value = 0.0
             self._last_reset = datetime.now().replace(day=1, hour=0, minute=0, second=0)
@@ -123,8 +127,10 @@ class AlltimeBillSensor(SensorEntity, RestoreEntity):
         last_state = await self.async_get_last_state()
         
         if last_state and last_state.state not in (None, "unknown", "unavailable"):
-            try: self._attr_native_value = float(last_state.state)
-            except ValueError: self._attr_native_value = 0.0
+            try:
+                self._attr_native_value = float(last_state.state)
+            except ValueError:
+                self._attr_native_value = 0.0
         else:
             self._attr_native_value = 0.0
             
