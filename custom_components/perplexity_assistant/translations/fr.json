@@ -10,7 +10,8 @@
                     "custom_system_prompt": "Instructions personnalisées",
                     "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
                     "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant",
-                    "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 43200)"
+                    "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 43200)",
+                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour"
                 },
                 "description": "Pour utiliser Perplexity AI, vous devez générer une clé API via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             }
@@ -35,7 +36,8 @@
                     "custom_system_prompt": "Instructions personnalisées",
                     "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
                     "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant",
-                    "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 43200)"
+                    "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 43200)",
+                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour"
                 },
                 "description": "Modifier les paramètres d'intégration"
             }

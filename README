@@ -2,7 +2,7 @@
 	<h1>Perplexity Assistant for Home Assistant</h1>
 	<p>Your privacy-friendly AI helper powered by <a href="https://www.perplexity.ai/">Perplexity AI</a>, integrated directly into Home Assistant.</p>
 	<p>
-		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.0.0 • <strong>Integration Type:</strong> Service
+		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.1.0 • <strong>Integration Type:</strong> Service
 	</p>
 </div>
 
@@ -60,10 +60,11 @@ During setup you can specify:
 * API Key (required, must start with `pplx-` and length 53)
 * Language (default: `en`)
 * Model (default: `sonar` — other options include `sonar-pro`, `sonar-reasoning`, etc.)
-* Notify Each Response (persistent notification of outputs)
 * Custom System Prompt (short textual instruction override, up to 250 chars)
+* Enable Websearch (if enabled, Perplexity will be able to search information on internet)
 * Allow Entities Access (if enabled, entity states summary is sent to the model)
 * Allow Actions On Entities (if enabled, `ACTION:` directives may be parsed and executed)
+* Notify Each Response (persistent notification of outputs)
 
 ## 🔁 Options Flow (Post-Install)
 
@@ -85,15 +86,13 @@ data:
 
 Optional fields include model overrides.
 
-### 3. Parsing ACTION lines (Experimental)
-If you allow actions and the model includes lines like:
+### 3. API cost
+The following sheet represents the average cost by tested models:
 
-```
-ACTION: light.turn_on - light.living_room
-ACTION: climate.set_temperature - climate.downstairs
-```
-
-The assistant will performs those actions.
+| Model | Request Cost | Input Token Cost | Output Token Cost | Average Prompt Cost |
+|-------|--------------|------------------|-------------------|---------------------|
+| sonar | $0.005 | $0.000001 | $0.000001 | $0.00674 |
+| sonar-pro | $0.006 | $0.000003 | $0.000015 | $0.0178 |
 
 ## 📊 Sensors
 
@@ -117,16 +116,23 @@ Two diagnostic sensors are created:
 ### Project Layout
 
 ```
-perplexity_assistant/
-	__init__.py              # Entry setup/unload, service registration, platform forwarding
-	config_flow.py           # Config + options flow definitions
-	const.py                 # Constants (models, languages, system prompt)
-	conversation.py          # Conversation agent implementation
-	sensor.py                # Diagnostic cost sensors (monthly + all-time)
-	services.yaml            # Service schema definition
-	strings.json             # UI strings for config/options flow
-	manifest.json            # Integration metadata
-	README.md                # Documentation
+custom_components/
+	perplexity_assistant/
+		translations/
+			en.json				 # English translation
+			fr.json				 # French translation
+			...
+		__init__.py              # Entry setup/unload, service registration, platform forwarding
+		config_flow.py           # Config + options flow definitions
+		const.py                 # Constants (models, languages, system prompt)
+		conversation.py          # Conversation agent implementation
+		sensor.py                # Diagnostic cost sensors (monthly + all-time)
+		services.yaml            # Service schema definition
+		strings.json             # UI strings for config/options flow
+		manifest.json            # Integration metadata
+hacs.json						 # Special manifest file for HACS
+LICENSE							 # MIT License
+README.md                		 # Documentation
 ```
 
 ### Key Components
@@ -168,11 +174,13 @@ logger:
 
 ## 🗺 Roadmap
 
-* HACS distribution.
-* Improved ACTION execution sandbox.
+* [WIP] HACS distribution.
+* [WIP] Improved ACTION execution sandbox.
+* Conversation memory.
 * Optional streaming mode (real-time tokens).
-* Translation + localization improvements.
-* Real credit / token usage retrieval (if Perplexity API allows it).
+* More translation + localization improvements.
+* Request counter sensor.
+* Upgrade `ask_perplexity` service.
 
 ## 📝 License
 
@@ -181,8 +189,8 @@ This project is distributed under the MIT License.
 ## 🙏 Acknowledgments
 
 * Powered by Perplexity AI
-* Inspired by Home Assistant’s openness and extensibility
-* Created by Pekul
+* Thanks to Home Assistant’s openness, extensibility and team
+* Created by Pekul (@Pekulll)
 
 ---
 

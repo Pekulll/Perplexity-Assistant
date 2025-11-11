@@ -3,7 +3,7 @@
   "name": "Perplexity Assistant",
   "documentation": "https://github.com/Pekulll/perplexity-assistant",
   "issue_tracker": "https://github.com/Pekulll/perplexity-assistant/issues",
-  "requirements": ["requests", "aiohttp"],
+  "requirements": ["requests", "aiohttp", "pydantic"],
   "codeowners": ["@Pekulll"],
   "config_flow": true,
   "version": "1.1.0",

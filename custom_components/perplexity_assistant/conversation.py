@@ -9,6 +9,9 @@ from homeassistant.components.conversation import AbstractConversationAgent, Con
 from homeassistant.core import ServiceCall, HomeAssistant
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.intent import IntentResponse
+from homeassistant.const import __version__ as HA_VERSION
+from pydantic import BaseModel
+from typing import List, Optional
 
 from .const import *
 from .sensor import AlltimeBillSensor, MonthlyBillSensor
@@ -16,8 +19,33 @@ from .sensor import AlltimeBillSensor, MonthlyBillSensor
 
 _LOGGER = logging.getLogger(__name__)
 
+
+class PerplexityAgentAction(BaseModel):
+    """Represents an action suggested by the Perplexity agent."""
+    domain: str
+    service: str
+    target: str
+    parameters: Optional[dict]
+    
+    def __str__(self) -> str:
+        """String representation of the action."""
+        return f"ACTION: {self.domain}.{self.service} > {self.target} > {json.dumps(self.parameters) if self.parameters else '{}'}"
+    
+
+class PerplexityAgentResponse(BaseModel):
+    """Represents the response from the Perplexity agent."""
+    content: str
+    actions: Optional[List[PerplexityAgentAction]]
+    
+
 class PerplexityAgent(AbstractConversationAgent):
     """Home Assistant conversation agent based on the Perplexity API."""
+    RESPONSE_FORMAT: dict = {
+            "type": "json_schema",
+            "json_schema": {
+                "schema": PerplexityAgentResponse.model_json_schema()
+            }
+        }
 
     def __init__(self, hass: HomeAssistant, config_entry_id: str) -> None:
         """Initialize the Perplexity agent.
@@ -33,9 +61,11 @@ class PerplexityAgent(AbstractConversationAgent):
         self.language: str = self.config_entry.options.get(CONF_LANGUAGE, "en")
         self.custom_system_prompt: str = self.config_entry.options.get(CONF_CUSTOM_SYSTEM_PROMPT, "")
         self.entities_summary_refresh_rate: int = self.config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE)
+        self.enable_websearch: bool = self.config_entry.options.get(CONF_ENABLE_WEBSEARCH, False)
         self.allow_entities_access: bool = self.config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, False)
         self.allow_actions_on_entities: bool = self.config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
         self.notify_response: bool = self.config_entry.options.get(CONF_NOTIFY_RESPONSE, False)
+        self.agent_name = self.config_entry.title
         
         self._summary: str | None = None
         self._last_summary_update: datetime | None = None
@@ -109,33 +139,49 @@ class PerplexityAgent(AbstractConversationAgent):
         entities_summary: str = "Access not allowed." if not self.allow_entities_access else self._generate_entities_summary()
     
         prompt: str = user_input.text
+        user_name = "UNKNOW"
+
+        if user_input.context and user_input.context.user_id:
+            user = await self.hass.auth.async_get_user(user_input.context.user_id)
+            user_name = user.name if user else "UNKNOW"
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
+            "User-Agent": f"HomeAssistant/{HA_VERSION}"
         }
         
         payload = {
             "model": self.model,
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "system", "content": f"Here is a summary of the Home Assistant entities for context: {entities_summary}"},
+                {"role": "system", "content": f"HOME ASSISTANT VERSION: {HA_VERSION} | Summary Home Assistant's entities for context: {entities_summary} | YOUR NAME IS {self.agent_name}"},
+                {"role": "system", "content": f"USER NAME: {user_name} | USER LANGUAGE: {self.language}."},
                 {"role": "user", "content": f"USER SYSTEM PROMPT: {self.custom_system_prompt} | USER PROMPT: {prompt}"}
             ],
-            "stream": False
+            "stream": False,
+            "max_tokens": MAX_TOKENS,
+            "temperature": CREATIVITY,
+            "top_p": DIVERSITY,
+            "frequency_penalty": FREQUENCY_PENALTY,
+            "response_format": self.RESPONSE_FORMAT,
+            "disable_search": not self.enable_websearch
         }
 
         # Send the request to Perplexity API
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(BASE_URL, json=payload, headers=headers) as resp:
+                    _LOGGER.debug(f"Perplexity API request sent.\nRequest Headers: {headers}\nRequest Payload: {payload}")
+                    
                     if resp.status != 200: # Handle non-200 responses
                         _LOGGER.error(f"Perplexity API error: status {resp.status}. Error response: {await resp.text()}")
-                        content: str = f"Error communicating with the Perplexity AI service. Status code: {resp.status}"
+                        response_text: str = f"Error communicating with the Perplexity AI service. Status code: {resp.status}"
                     else: # Successful response
                         data: dict = await resp.json()
-                        content: str = data["choices"][0]["message"]["content"]
+                        content: PerplexityAgentResponse = PerplexityAgentResponse.model_validate_json(data["choices"][0]["message"]["content"])
                         cost: float = data.get("usage", {}).get("cost", {}).get("total_cost", 0.0)
+                        response_text: str = content.content
                         
                         _LOGGER.debug(f"Perplexity API has responded successfully (cost={cost}). Response: {content}")
                         
@@ -146,37 +192,28 @@ class PerplexityAgent(AbstractConversationAgent):
                         alltime_sensor.increment_cost(cost) if alltime_sensor else None
                         
                         if self.notify_response:
+                            _LOGGER.debug(f"Sending notification for Perplexity response.")
                             self.hass.async_create_task(
                                 self.hass.services.async_call(
                                     "notify",
                                     "persistent_notification",
                                     {
-                                        "title": "Perplexity Assistant",
-                                        "message": content,
+                                        "title": f"{self.agent_name} (Perplexity Assistant)",
+                                        "message": f"{content.content}{'\n\n' + '\n- '.join(str(a) for a in content.actions) if content.actions else ''}",
                                     },
                                 )
                             )
                     
-                    # Handle ACTION commands in the response
-                    if "ACTION:" in content and self.allow_actions_on_entities:
-                        for line in content.splitlines():
-                            if not line.startswith("ACTION:"):
-                                continue
-                            
-                            action_part: list[str] = line[len("ACTION: "):].split(" - ") # Split into action, target, parameters
-                            
-                            if len(action_part) < 2: # Invalid format
-                                _LOGGER.warning(f"Invalid ACTION format in response: {line}")
-                                continue
-                            
-                            action: str = action_part[0].strip() # Get action
-                            target: str = action_part[1].strip() # Get target
-                            parameters: dict = json.loads(action_part[2]) if len(action_part) > 2 else {} # Get parameters if present
-                            domain, service = action.split(".") # Split action into domain and service
-                            await self.hass.services.async_call(domain, service, {"entity_id": target, **parameters})
+                        # Handle ACTION commands in the response
+                        if content.actions and self.allow_actions_on_entities:
+                            for action in content.actions:
+                                _LOGGER.debug(f"Executing action from Perplexity response: {action.domain}.{action.service} on {action.target} with parameters {action.parameters}")
+                                try: await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
+                                except Exception as e: _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
+                        
 
                     response = IntentResponse(language=self.language)
-                    response.async_set_speech(content)
+                    response.async_set_speech(response_text)
                     return ConversationResult(response=response)
         except Exception as e: # Handle exceptions
             _LOGGER.error("Exception while communicating with Perplexity API: %s", e)

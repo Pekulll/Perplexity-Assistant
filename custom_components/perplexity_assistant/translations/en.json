@@ -10,7 +10,8 @@
                     "custom_system_prompt": "Custom system prompt",
                     "allow_entities_access": "Allow access to Home Assistant entities",
                     "allow_actions_on_entities": "Allow actions on Home Assistant entities",
-                    "entities_summary_refresh_rate": "Entities summary refresh rate (seconds, default: 3600)"
+                    "entities_summary_refresh_rate": "Entities summary refresh rate (default: 3600)",
+                    "enable_web_search": "Enable web search for up-to-date information"
                 },
                 "description": "In order to use the Perplexity Assistant, you need to generate an API key via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             }
@@ -35,7 +36,8 @@
                     "custom_system_prompt": "Custom system prompt",
                     "allow_entities_access": "Allow access to Home Assistant entities",
                     "allow_actions_on_entities": "Allow actions on Home Assistant entities",
-                    "entities_summary_refresh_rate": "Entities summary refresh rate (seconds, default: 3600)"
+                    "entities_summary_refresh_rate": "Entities summary refresh rate (default: 3600)",
+                    "enable_web_search": "Enable web search for up-to-date information"
                 },
                 "description": "Change the integration settings"
             }
