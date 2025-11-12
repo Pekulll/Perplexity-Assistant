@@ -56,19 +56,21 @@ class PerplexityAgent(AbstractConversationAgent):
         """
         self.hass: HomeAssistant = hass
         self.config_entry: ConfigEntry = self.hass.config_entries.async_get_entry(config_entry_id)
-        self.api_key: str = self.config_entry.options.get(CONF_API_KEY, "")
-        self.model: str = self.config_entry.options.get(CONF_MODEL, "sonar")
-        self.language: str = self.config_entry.options.get(CONF_LANGUAGE, "en")
-        self.custom_system_prompt: str = self.config_entry.options.get(CONF_CUSTOM_SYSTEM_PROMPT, "")
-        self.entities_summary_refresh_rate: int = self.config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE)
-        self.enable_websearch: bool = self.config_entry.options.get(CONF_ENABLE_WEBSEARCH, False)
-        self.allow_entities_access: bool = self.config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, False)
-        self.allow_actions_on_entities: bool = self.config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
-        self.notify_response: bool = self.config_entry.options.get(CONF_NOTIFY_RESPONSE, False)
         self.agent_name = self.config_entry.title
         
         self._summary: str | None = None
         self._last_summary_update: datetime | None = None
+    
+    def _get_config(self, key: str, default: any = None) -> any:
+        """Helper to get configuration options with a default.
+
+        Args:
+            key (str): Configuration key.
+            default (any): Default value if key is not found.
+        Returns:
+            any: Configuration value or default.
+        """
+        return self.config_entry.options.get(key) or self.config_entry.data.get(key, default)
 
     @property
     def attribution(self) -> str:
@@ -88,7 +90,7 @@ class PerplexityAgent(AbstractConversationAgent):
         """
         if self._summary and self._last_summary_update:
             # Regenerate summary every self.entities_summary_refresh_rate seconds
-            if (datetime.now() - self._last_summary_update).total_seconds() < self.entities_summary_refresh_rate:
+            if (datetime.now() - self._last_summary_update).total_seconds() < self._get_config(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE):
                 return self._summary
         
         _LOGGER.debug("Generating entities summary for Perplexity context.")
@@ -136,7 +138,7 @@ class PerplexityAgent(AbstractConversationAgent):
             ConversationResult: The response formatted for Home Assistant.
         """
         # Get config entry options
-        entities_summary: str = "Access not allowed." if not self.allow_entities_access else self._generate_entities_summary()
+        entities_summary: str = "Access not allowed." if not self._get_config(CONF_ALLOW_ENTITIES_ACCESS, False) else self._generate_entities_summary()
     
         prompt: str = user_input.text
         user_name = "UNKNOWN"
@@ -146,18 +148,18 @@ class PerplexityAgent(AbstractConversationAgent):
             user_name = user.name if user else "UNKNOWN"
 
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self._get_config('api_key', '')}",
             "Content-Type": "application/json",
             "User-Agent": f"HomeAssistant/{HA_VERSION}"
         }
         
         payload = {
-            "model": self.model,
+            "model": self._get_config(CONF_MODEL, DEFAULT_MODEL),
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "system", "content": f"HOME ASSISTANT VERSION: {HA_VERSION} | Summary Home Assistant's entities for context: {entities_summary} | YOUR NAME IS {self.agent_name}"},
-                {"role": "system", "content": f"USER NAME: {user_name} | USER LANGUAGE: {self.language}."},
-                {"role": "user", "content": f"USER SYSTEM PROMPT: {self.custom_system_prompt} | USER PROMPT: {prompt}"}
+                {"role": "system", "content": f"USER NAME: {user_name} | USER LANGUAGE: {self._get_config(CONF_LANGUAGE, 'en')}."},
+                {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | USER PROMPT: {prompt}"}
             ],
             "stream": False,
             "max_tokens": MAX_TOKENS,
@@ -165,7 +167,7 @@ class PerplexityAgent(AbstractConversationAgent):
             "top_p": DIVERSITY,
             "frequency_penalty": FREQUENCY_PENALTY,
             "response_format": self.RESPONSE_FORMAT,
-            "disable_search": not self.enable_websearch
+            "disable_search": not self._get_config(CONF_ENABLE_WEBSEARCH, False)
         }
 
         # Send the request to Perplexity API
@@ -191,7 +193,7 @@ class PerplexityAgent(AbstractConversationAgent):
                         alltime_sensor: AlltimeBillSensor = self.hass.data.get("perplexity_assistant_sensors", {}).get("alltime_bill_sensor")
                         alltime_sensor.increment_cost(cost) if alltime_sensor else None
                         
-                        if self.notify_response:
+                        if self._get_config(CONF_NOTIFY_RESPONSE, False):
                             _LOGGER.debug(f"Sending notification for Perplexity response.")
                             self.hass.async_create_task(
                                 self.hass.services.async_call(
@@ -199,13 +201,13 @@ class PerplexityAgent(AbstractConversationAgent):
                                     "persistent_notification",
                                     {
                                         "title": f"{self.agent_name} (Perplexity Assistant)",
-                                        "message": f"{content.content}{'\n\n' + '\n- '.join(str(a) for a in content.actions) if content.actions else ''}",
+                                        "message": f"{content.content}{'\n\n- ' + '\n- '.join(str(a) for a in content.actions) if content.actions else ''}",
                                     },
                                 )
                             )
                     
                         # Handle ACTION commands in the response
-                        if content.actions and self.allow_actions_on_entities:
+                        if content.actions and self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False):
                             for action in content.actions:
                                 _LOGGER.debug(f"Executing action from Perplexity response: {action.domain}.{action.service} on {action.target} with parameters {action.parameters}")
                                 try:
@@ -214,11 +216,11 @@ class PerplexityAgent(AbstractConversationAgent):
                                     _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
                         
 
-                    response = IntentResponse(language=self.language)
+                    response = IntentResponse(language=self._get_config(CONF_LANGUAGE, "en"))
                     response.async_set_speech(response_text)
                     return ConversationResult(response=response)
         except Exception as e: # Handle exceptions
             _LOGGER.error("Exception while communicating with Perplexity API: %s", e)
-            response = IntentResponse(language=self.language)
+            response = IntentResponse(language=self._get_config(CONF_LANGUAGE, "en"))
             response.async_set_speech("Error communicating with the Perplexity AI service.")
             return ConversationResult(response=response)
