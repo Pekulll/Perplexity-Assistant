@@ -11,7 +11,8 @@
                     "allow_entities_access": "Allow access to Home Assistant entities",
                     "allow_actions_on_entities": "Allow actions on Home Assistant entities",
                     "entities_summary_refresh_rate": "Entities summary refresh rate (seconds, default: 3600)",
-                    "enable_web_search": "Enable web search for up-to-date information"
+                    "enable_web_search": "Enable web search for up-to-date information",
+                    "enable_response_on_speakers": "Enable responses to be played through speakers"
                 },
                 "description": "In order to use the Perplexity Assistant, you need to generate an API key via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             }
@@ -37,7 +38,8 @@
                     "allow_entities_access": "Allow access to Home Assistant entities",
                     "allow_actions_on_entities": "Allow actions on Home Assistant entities",
                     "entities_summary_refresh_rate": "Entities summary refresh rate (seconds, default: 3600)",
-                    "enable_web_search": "Enable web search for up-to-date information"
+                    "enable_web_search": "Enable web search for up-to-date information",
+                    "enable_response_on_speakers": "Enable responses to be played through speakers"
                 },
                 "description": "Change the integration settings"
             }

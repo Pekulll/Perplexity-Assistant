@@ -48,6 +48,7 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Optional(CONF_ENABLE_WEBSEARCH, default=False): BooleanSelector(),
             vol.Optional(CONF_ALLOW_ENTITIES_ACCESS, default=False): BooleanSelector(),
             vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=False): BooleanSelector(),
+            vol.Optional(CONF_ENABLE_RESPONSE_ON_SPEAKERS, default=False): BooleanSelector(),
             vol.Optional(CONF_NOTIFY_RESPONSE, default=False): BooleanSelector(),
         })
         
@@ -103,6 +104,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
         current_allow_entities_access: bool = config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS) or config_entry.data.get(CONF_ALLOW_ENTITIES_ACCESS, False)
         current_allow_actions_on_entities: bool = config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES) or config_entry.data.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
         current_notify_response: bool = config_entry.options.get(CONF_NOTIFY_RESPONSE) or config_entry.data.get(CONF_NOTIFY_RESPONSE, False)
+        current_enable_response_on_speakers: bool = config_entry.options.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS) or config_entry.data.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS, False)
 
         # Define the options schema with current values as defaults
         options_schema = vol.Schema({
@@ -114,6 +116,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Optional(CONF_ENABLE_WEBSEARCH, default=current_enable_websearch): BooleanSelector(),
             vol.Optional(CONF_ALLOW_ENTITIES_ACCESS, default=current_allow_entities_access): BooleanSelector(),
             vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=current_allow_actions_on_entities): BooleanSelector(),
+            vol.Optional(CONF_ENABLE_RESPONSE_ON_SPEAKERS, default=current_enable_response_on_speakers): BooleanSelector(),
             vol.Optional(CONF_NOTIFY_RESPONSE, default=current_notify_response): BooleanSelector(),
         })
 

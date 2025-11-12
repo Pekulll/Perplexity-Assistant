@@ -11,7 +11,8 @@
                     "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
                     "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant",
                     "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 3600)",
-                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour"
+                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour",
+                    "enable_response_on_speakers": "Activer la réponse via les haut-parleurs"
                 },
                 "description": "Pour utiliser Perplexity AI, vous devez générer une clé API via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             }
@@ -37,7 +38,8 @@
                     "allow_entities_access": "Autoriser l'accès aux entités de Home Assistant",
                     "allow_actions_on_entities": "Autoriser les actions sur les entités de Home Assistant",
                     "entities_summary_refresh_rate": "Fréquence de rafraîchissement de l'état des entités (par défaut : 3600)",
-                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour"
+                    "enable_web_search": "Activer la recherche sur le Web pour des informations à jour",
+                    "enable_response_on_speakers": "Activer la réponse via les haut-parleurs"
                 },
                 "description": "Modifier les paramètres d'intégration"
             }

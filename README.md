@@ -2,7 +2,7 @@
 	<h1>Perplexity Assistant for Home Assistant</h1>
 	<p>Your privacy-friendly AI helper powered by <a href="https://www.perplexity.ai/">Perplexity AI</a>, integrated directly into Home Assistant.</p>
 	<p>
-		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.1.0 • <strong>Integration Type:</strong> Service
+		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.2.0 • <strong>Integration Type:</strong> Service
 	</p>
 </div>
 

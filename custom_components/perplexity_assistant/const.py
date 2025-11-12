@@ -14,6 +14,7 @@ CONF_ALLOW_ACTIONS_ON_ENTITIES: str = "allow_actions_on_entities"
 CONF_ENTITIES_SUMMARY_REFRESH_RATE: str = "entities_summary_refresh_rate"
 CONF_NOTIFY_RESPONSE: str = "notify_response"
 CONF_ENABLE_WEBSEARCH: str = "enable_web_search"
+CONF_ENABLE_RESPONSE_ON_SPEAKERS: str = "enable_response_on_speakers"
 
 # Perplexity API endpoint
 BASE_URL: str = "https://api.perplexity.ai/chat/completions"
@@ -26,6 +27,7 @@ SUPPORTED_LANGUAGES: list[str] = ["en", "fr", "es", "de", "it", "pt", "nl", "ru"
 DEFAULT_MODEL: str = "sonar"
 DEFAULT_LANGUAGE: str = "en"
 DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE: int = 3600 # in seconds (1 hour)
+DEFAULT_TTS: str = "tts.piper"
 
 # System prompt template for the AI assistant
 SYSTEM_PROMPT: str = f"""
@@ -52,7 +54,9 @@ SYSTEM_PROMPT: str = f"""
     When the user requests an action:
     - Actions follow a VERB + ENTITY TYPE format (e.g., "turn on the living room light", "set the thermostat to 22°C", "start coffee machine").
     - Multiple actions can be included in a single request.
-    - Skip any unsafe or invalid actions."""
+    - Skip any unsafe or invalid actions.
+    - If you can locate the exact room where the user is based on their requests, with a high level of confidence, add an action to send the response through the speakers.
+"""
     
 MAX_TOKENS: int = 500              # Limit response length
 CREATIVITY: float = 0.9            # Control creativity         0.1=more factual, 0.9=more creative

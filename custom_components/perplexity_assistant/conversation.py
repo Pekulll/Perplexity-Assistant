@@ -210,8 +210,21 @@ class PerplexityAgent(AbstractConversationAgent):
                         if content.actions and self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False):
                             for action in content.actions:
                                 _LOGGER.debug(f"Executing action from Perplexity response: {action.domain}.{action.service} on {action.target} with parameters {action.parameters}")
+                                
                                 try:
-                                    await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
+                                    if action.domain == "tts" and action.service == "speak" and self._get_config(CONF_ENABLE_RESPONSE_ON_SPEAKERS, False):
+                                        # Special handling for TTS actions to format parameters correctly
+                                        tts_data = action.parameters or {}
+                                        tts_data = {
+                                            "media_player_entity_id": tts_data.get("media_player_entity_id") or tts_data.get("entity_id") or action.target,
+                                            "message": tts_data.get("message", response_text),
+                                            "cache": False,
+                                            "entity_id": DEFAULT_TTS
+                                        }
+                                        
+                                        await self.hass.services.async_call(action.domain, action.service, tts_data)
+                                    else:
+                                        await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
                                 except Exception as e:
                                     _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
                         
