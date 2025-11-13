@@ -119,7 +119,7 @@ automation:
       - platform: time
         at: "07:30:00"
     action:
-      - service: perplexity_assistant.as
+      - service: perplexity_assistant.ask
         data:
           prompt: "Give me a concise status of lights and climate; if heater is off and <20C turn it on"
           execute_actions: true
