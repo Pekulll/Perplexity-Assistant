@@ -2,7 +2,6 @@
 import aiohttp
 import json
 import logging
-import threading
 
 from datetime import datetime
 from homeassistant.config_entries import ConfigEntry
@@ -198,7 +197,8 @@ class PerplexityAgent(AbstractConversationAgent):
                 
                 await self.hass.services.async_call(action.domain, action.service, tts_data)
             else:
-                await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **action.parameters})
+                params = action.parameters or {}
+                await self.hass.services.async_call(action.domain, action.service, {"entity_id": action.target, **params})
         except Exception as e:
             _LOGGER.warning(f"Failed to execute action {action.domain}.{action.service} on {action.target}: {e}")
 
@@ -246,8 +246,8 @@ class PerplexityAgent(AbstractConversationAgent):
             # Handle ACTION commands in the response
             if (execute_actions and content.actions and self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)) or force_actions_execution:
                 for action in content.actions:
-                    action_thread = threading.Thread(target=self._execute_action, args=(action, response_text))
-                    action_thread.start()
+                    # Schedule coroutine on HA's event loop (non-blocking)
+                    self.hass.async_create_task(self._execute_action(action, response_text))
 
             return {"response": response_text, "error": None, "cost": cost}
         except Exception as e:

@@ -81,6 +81,14 @@
         "sonar-reasoning-pro": "Sonar Reasoning Pro",
         "sonar-deep-research": "Sonar Deep Research"
       }
+    },
+    "menu": {
+      "options": {
+        "api": "Clave API",
+        "model": "Modelo & Idioma",
+        "model_parameters": "Parámetros del modelo",
+        "authorization": "Autorizaciones & Permisos"
+      }
     }
   },
   "options": {

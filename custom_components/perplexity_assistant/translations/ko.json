@@ -81,6 +81,14 @@
         "sonar-reasoning-pro": "Sonar Reasoning Pro",
         "sonar-deep-research": "Sonar Deep Research"
       }
+    },
+    "menu": {
+      "options": {
+        "api": "API 키",
+        "model": "모델 & 언어",
+        "model_parameters": "모델 매개변수",
+        "authorization": "권한 & 허용 범위"
+      }
     }
   },
   "options": {

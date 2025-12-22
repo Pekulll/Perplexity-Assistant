@@ -81,6 +81,14 @@
         "sonar-reasoning-pro": "Sonar Reasoning Pro",
         "sonar-deep-research": "Sonar Deep Research"
       }
+    },
+    "menu": {
+      "options": {
+        "api": "API 密钥",
+        "model": "模型 & 语言",
+        "model_parameters": "模型参数",
+        "authorization": "授权 & 权限"
+      }
     }
   },
   "options": {

@@ -189,12 +189,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
 
         selector = SelectSelector(
             SelectSelectorConfig(
-                options=[
-                    {"value": "api", "label": "Edit API Key"},
-                    {"value": "model", "label": "Edit Model & Language"},
-                    {"value": "model_parameters", "label": "Edit Model Parameters"},
-                    {"value": "authorization", "label": "Edit Authorization & Permissions"},
-                ],
+                options=['api', 'model', 'model_parameters', 'authorization'],
                 mode=SelectSelectorMode.DROPDOWN,
                 translation_key="menu"
             )
