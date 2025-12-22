@@ -54,7 +54,7 @@ DEFAULT_ALLOW_ACTIONS_ON_ENTITIES: bool = True
 DEFAULT_NOTIFY_RESPONSE: bool = False
 DEFAULT_ENABLE_WEBSEARCH: bool = False
 DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS: bool = True
-DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE: int = 10 # in seconds (1 hour)
+DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE: int = 10 # in seconds
 DEFAULT_TTS: str = "tts.piper"
 
 DEFAULT_MAX_TOKENS: int = 500               # Limit response length

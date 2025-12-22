@@ -31,27 +31,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """
     _LOGGER.debug("Setup of the Perplexity Assistant module")
     
-    # Create the Perplexity conversation agent
-    entry = next(iter(hass.config_entries.async_entries(DOMAIN)), None)
-    
-    if entry is None:
-        _LOGGER.error("No config entry found for Perplexity Assistant during setup")
-        return False
-    
-    agent = PerplexityAgent(hass, entry.entry_id)
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = agent
-    
-    # Register the conversation agent and service
-    ha_conversation.async_set_agent(hass, entry, agent)
-    service_schema = vol.Schema({
-        vol.Required("prompt"): cv.string,
-        vol.Optional("model"): cv.string,
-        vol.Optional("enable_websearch"): cv.boolean,
-        vol.Optional("execute_actions"): cv.boolean,
-        vol.Optional("force_actions_execution"): cv.boolean
-    })
-    hass.services.async_register(DOMAIN, "ask", agent.async_ask, schema=service_schema, supports_response="optional")
-    
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -67,10 +46,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         bool: True if setup is successful.
     """
     _LOGGER.debug("Setting up Perplexity Assistant from config entry")
-
+    
     # Forward setup to sensor platform
     if entry.data.get("create_credit_sensor"):
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    
+    agent = PerplexityAgent(hass, entry.entry_id)
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = agent
+    
+    # Register the conversation agent and service
+    ha_conversation.async_set_agent(hass, entry, agent)
+    service_schema = vol.Schema({
+        vol.Required("prompt"): cv.string,
+        vol.Optional("model"): cv.string,
+        vol.Optional("enable_websearch"): cv.boolean,
+        vol.Optional("execute_actions"): cv.boolean,
+        vol.Optional("force_actions_execution"): cv.boolean
+    })
+    
+    hass.services.async_register(DOMAIN, "ask", agent.async_ask, schema=service_schema, supports_response="optional")
     
     return True
 

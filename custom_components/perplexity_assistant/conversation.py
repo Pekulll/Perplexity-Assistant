@@ -11,7 +11,7 @@ from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.intent import IntentResponse
 from homeassistant.const import __version__ as HA_VERSION
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from .const import *
 from .sensor import AlltimeBillSensor, MonthlyBillSensor
@@ -61,7 +61,7 @@ class PerplexityAgent(AbstractConversationAgent):
         self._summary: str | None = None
         self._last_summary_update: datetime | None = None
     
-    def _get_config(self, key: str, default: any = None) -> any:
+    def _get_config(self, key: str, default: Any = None) -> Any:
         """Helper to get configuration options with a default.
 
         Args:

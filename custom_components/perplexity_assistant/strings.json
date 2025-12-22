@@ -82,7 +82,7 @@
                 "sonar-deep-research": "Sonar Deep Research"
             }
         },
-        "configuration_options": {
+        "menu": {
             "options": {
                 "api": "Edit API Key",
                 "model": "Model & Language",
