@@ -231,9 +231,6 @@ logger:
 
 ## 🗺 Roadmap
 
-* [TESTING] Improved ACTION execution sandbox.
-* [TESTING] Rework configuration flow, with an advanced configuration flow.
-* [TESTING] Upgrade `ask` service.
 * [WIP] HACS distribution.
 * [WIP] More translation + localization improvements.
 * Conversation memory.
