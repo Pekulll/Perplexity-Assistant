@@ -3,10 +3,12 @@
         "step": {
             "user": {
                 "data": {
-                    "api_key": "API Key"
+                    "api_key": "API Key",
+                    "max_credits_usage": "Max Credits Usage ($)"
                 },
                 "data_description": {
-                    "api_key": "The provided API key will be used to authenticate requests to the Perplexity AI service. It is of the form: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    "api_key": "The provided API key will be used to authenticate requests to the Perplexity AI service. It is of the form: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                    "max_credits_usage": "Set the maximum amount of credits (in USD) that can be used for the Perplexity API. Once this limit is reached, no further requests will be made."
                 },
                 "description": "In order to use the Perplexity Assistant, you need to generate an API key via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             },
@@ -41,16 +43,16 @@
             },
             "authorization": {
                 "data": {
-                    "allow_entities_access": "Allow access to Home Assistant entities",
+                    "allow_entities_access": "Allow access to exposed Home Assistant entities.",
                     "entities_summary_refresh_rate": "Entities summary refresh rate",
-                    "allow_actions_on_entities": "Allow actions on Home Assistant entities",
+                    "allow_actions_on_entities": "Allow actions on exposed Home Assistant entities",
                     "enable_web_search": "Enable web search for up-to-date information",
                     "notify_response": "Notify each response to a query",
                     "enable_response_on_speakers": "Enable responses to be played through speakers",
                     "tts_engine": "TTS Engine"
                 },
                 "data_description": {
-                    "allow_entities_access": "Allows the Perplexity Assistant to access entities from your Home Assistant instance to provide more contextual responses.",
+                    "allow_entities_access": "Allows the Perplexity Assistant to access exposed entities from your Home Assistant instance to provide more contextual responses.",
                     "entities_summary_refresh_rate": "Sets how often the Perplexity Assistant updates the summary of Home Assistant entities' states (in seconds).",
                     "allow_actions_on_entities": "Allows the Perplexity Assistant to perform actions on Home Assistant entities, such as turning on lights or adjusting the thermostat.",
                     "enable_web_search": "Enables the Perplexity Assistant's ability to perform web searches for up-to-date information, although this may sometimes reduce response relevance.",
@@ -89,6 +91,14 @@
                 "model_parameters": "Model Parameters",
                 "authorization": "Authorizations & Permissions"
             }
+        },
+        "data_recency_options": {
+            "options": {
+                "day": "Past Day",
+                "week": "Past Week",
+                "month": "Past Month",
+                "year": "Past Year"
+            }
         }
     },
     "options": {
@@ -100,10 +110,12 @@
             },
             "api": {
                 "data": {
-                    "api_key": "API Key"
+                    "api_key": "API Key",
+                    "max_credits_usage": "Max Credits Usage ($)"
                 },
                 "data_description": {
-                    "api_key": "The provided API key will be used to authenticate requests to the Perplexity AI service. It is of the form: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    "api_key": "The provided API key will be used to authenticate requests to the Perplexity AI service. It is of the form: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                    "max_credits_usage": "Set the maximum amount of credits (in USD) that can be used for the Perplexity API. Once this limit is reached, no further requests will be made."
                 },
                 "description": "In order to use the Perplexity Assistant, you need to generate an API key via [Perplexity](https://www.perplexity.ai/account/api/keys)."
             },
@@ -137,7 +149,7 @@
             },
             "authorization": {
                 "data": {
-                    "allow_entities_access": "Allow access to Home Assistant entities",
+                    "allow_entities_access": "Allow access to exposed Home Assistant entities",
                     "entities_summary_refresh_rate": "Entities summary refresh rate",
                     "allow_actions_on_entities": "Allow actions on Home Assistant entities",
                     "enable_web_search": "Enable web search for up-to-date information",
@@ -146,9 +158,9 @@
                     "tts_engine": "TTS Engine"
                 },
                 "data_description": {
-                    "allow_entities_access": "Allows the Perplexity Assistant to access entities from your Home Assistant instance to provide more contextual responses.",
+                    "allow_entities_access": "Allows the Perplexity Assistant to access exposed entities from your Home Assistant instance to provide more contextual responses.",
                     "entities_summary_refresh_rate": "Sets how often the Perplexity Assistant updates the summary of Home Assistant entities' states (in seconds).",
-                    "allow_actions_on_entities": "Allows the Perplexity Assistant to perform actions on Home Assistant entities, such as turning on lights or adjusting the thermostat.",
+                    "allow_actions_on_entities": "Allows the Perplexity Assistant to perform actions on exposed Home Assistant entities, such as turning on lights or adjusting the thermostat.",
                     "enable_web_search": "Enables the Perplexity Assistant's ability to perform web searches for up-to-date information, although this may sometimes reduce response relevance.",
                     "notify_response": "If enabled, the Perplexity Assistant will notify you of each response it generates.",
                     "enable_response_on_speakers": "Allows the Perplexity Assistant to play responses through speakers connected to Home Assistant, provided TTS is configured and Perplexity can precisely locate you.",
@@ -191,6 +203,10 @@
                 "force_actions_execution": {
                     "name": "Force Actions Execution",
                     "description": "WARNING: OVERRIDES CONFIGURATION PARAMETERS. If enabled, actions detected in the response will be automatically executed."
+                },
+                "data_recency": {
+                    "name": "Data Recency",
+                    "description": "Specify the recency of the data to be used in web searches. Options include 'hour', 'day', 'week', 'month', 'year'. If not specified, defaults to 'day'."
                 }
             }
         }

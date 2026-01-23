@@ -6,6 +6,7 @@ DOMAIN: str = "perplexity_assistant"
 
 # Configuration and option keys
 CONF_API_KEY: str = "api_key"
+CONF_MAX_CREDITS_USAGE: str = "max_credits_usage"
 CONF_MODEL: str = "model"
 CONF_LANGUAGE: str = "language"
 CONF_CUSTOM_SYSTEM_PROMPT: str = "custom_system_prompt"
@@ -47,6 +48,7 @@ SUPPORTED_LANGUAGES: list[dict] = [
 ]
 
 # Default configuration values
+DEFAULT_MAX_CREDITS_USAGE: float = 5.0  # in USD
 DEFAULT_MODEL: str = "sonar"
 DEFAULT_LANGUAGE: str = "en"
 DEFAULT_ALLOW_ENTITIES_ACCESS: bool = True

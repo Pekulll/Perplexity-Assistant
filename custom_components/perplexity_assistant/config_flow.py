@@ -58,6 +58,7 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Define the data schema for the form
         STEP_USER_DATA_SCHEMA = vol.Schema({
             vol.Required(CONF_API_KEY): text_selector,
+            vol.Required(CONF_MAX_CREDITS_USAGE, default=DEFAULT_MAX_CREDITS_USAGE): NumberSelector({"min": 0, "step": 0.1, "mode": "box", "unit_of_measurement": "$", "max": 100}),
         })
         
         # Otherwise, show the form
@@ -237,10 +238,12 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
         
         # Show the form to update options
         current_api_key: str = self.config_entry.options.get(CONF_API_KEY, self.config_entry.data.get(CONF_API_KEY, ""))
+        current_max_credits_usage: float = self.config_entry.options.get(CONF_MAX_CREDITS_USAGE, self.config_entry.data.get(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE))
 
         # Define the options schema with current values as defaults
         options_schema = vol.Schema({
             vol.Required(CONF_API_KEY, default=current_api_key): text_selector,
+            vol.Required(CONF_MAX_CREDITS_USAGE, default=current_max_credits_usage): NumberSelector({"min": 0, "step": 0.1, "mode": "box", "unit_of_measurement": "$", "max": 100}),
         })
 
         return self.async_show_form(step_id="api", data_schema=options_schema, errors=errors,)

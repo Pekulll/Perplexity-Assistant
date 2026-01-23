@@ -75,6 +75,11 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
     @property
     def native_value(self) -> float:
         """Return the native value of the sensor."""
+        now = datetime.now()
+
+        if now.month != self._last_reset.month or now.year != self._last_reset.year:
+            return 0.0
+            
         return round(self._attr_native_value, 4)
     
     @property
@@ -87,11 +92,14 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
         """Return the name of the sensor."""
         return "Perplexity Monthly Bill"
 
-    def increment_cost(self, cost: float):
-        """Add cost to current month."""
-        if datetime.now().month != self._last_reset.month:
-            self.reset_monthly_cost()
-            
+    def increment_cost(self, cost: float) -> None:
+        """Add cost to current monthly cost, with physical reset if month changed."""
+        now = datetime.now()
+        
+        if now.month != self._last_reset.month or now.year != self._last_reset.year:
+            self._attr_native_value = 0.0
+            self._last_reset = now.replace(day=1, hour=0, minute=0, second=0)
+
         self._attr_native_value += cost
         self.async_write_ha_state()
 

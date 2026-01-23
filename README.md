@@ -89,6 +89,7 @@ The integration exposes a single service to send ad‑hoc prompts with optional 
 | `enable_websearch` | boolean | no | Forces web search on/off regardless of global setting (true = enable; false = disable). |
 | `execute_actions` | boolean | no | If true, any valid detected ACTION lines are executed (subject to global allow actions). |
 | `force_actions_execution` | boolean | no | Hard override: executes detected actions even if global actions are disabled. Use cautiously. |
+| `data_recency` | string | no | Define the recency of the information from websearch |
 
 ### Example: Developer Tools Service Call
 ```yaml
@@ -114,15 +115,17 @@ script:
 ### Example: Automation Triggered by Time
 ```yaml
 automation:
-  - alias: Morning Summary
+  - alias: Morning News
     trigger:
       - platform: time
         at: "07:30:00"
     action:
       - service: perplexity_assistant.ask
         data:
-          prompt: "Give me a concise status of lights and climate; if heater is off and <20C turn it on"
-          execute_actions: true
+          prompt: "Give me a concise news report for the last 24 hours. Include 3 to 4 news."
+          execute_actions: false
+          enable_websearch: true
+          data_recency: "day"
 ```
 
 ### Safety Notes

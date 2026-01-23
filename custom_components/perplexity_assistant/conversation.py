@@ -7,8 +7,9 @@ from datetime import datetime
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.conversation import AbstractConversationAgent, ConversationInput, ConversationResult
 from homeassistant.core import ServiceCall, HomeAssistant
-from homeassistant.helpers import device_registry, entity_registry
+from homeassistant.helpers import device_registry, entity_registry, aiohttp_client
 from homeassistant.helpers.intent import IntentResponse
+from homeassistant.components.homeassistant.exposed_entities import async_should_expose
 from homeassistant.const import __version__ as HA_VERSION
 from pydantic import BaseModel
 from typing import List, Optional, Any
@@ -56,10 +57,13 @@ class PerplexityAgent(AbstractConversationAgent):
         """
         self.hass: HomeAssistant = hass
         self.config_entry: ConfigEntry = self.hass.config_entries.async_get_entry(config_entry_id)
-        self.agent_name = self.config_entry.title
-        
+        self.agent_name: str = self.config_entry.title
+
         self._summary: str | None = None
         self._last_summary_update: datetime | None = None
+        self._session: aiohttp.ClientSession = aiohttp_client.async_get_clientsession(hass)
+        self._history: list[str] = ['', '', '', '', '', '']
+        self._history_index: int = 0
     
     def _get_config(self, key: str, default: Any = None) -> Any:
         """Helper to get configuration options with a default.
@@ -102,6 +106,9 @@ class PerplexityAgent(AbstractConversationAgent):
         summary = f"The Home Assistant instance has {len(entities)} entities."
                 
         for entity in entities:
+            if not async_should_expose(self.hass, DOMAIN, entity.entity_id):
+                continue
+
             ha_entity = ha_entity_registry.async_get(entity.entity_id) # Get entity registry entry (to access unique_id)
             ha_device = ha_device_registry.async_get(ha_entity.device_id) if ha_entity else None # Get device using unique_id
             room = ha_device.area_id if ha_device and hasattr(ha_device, "area_id") else None # Get area_id safely
@@ -113,16 +120,22 @@ class PerplexityAgent(AbstractConversationAgent):
         return summary
 
 
-    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", override_model: str | None = None, force_websearch_access: bool = False) -> dict:
+    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None) -> dict:
         """Send a request to the Perplexity API.
 
         Args:
             messages (list[dict]): The request payload.
             username (str): The name of the user making the request.
             force_web_search_access (bool): Whether to force web search access.
+            data_freshness (str | None): The freshness of the data requested.
         Returns:
             dict: The response from the Perplexity API.
         """
+
+        if self._get_config(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE) >= self.hass.data.get("perplexity_assistant_sensors", {}).get("monthly_bill_sensor").current_cost:
+            _LOGGER.warning("Max credits usage limit reached. Aborting request to Perplexity API.")
+            return {"error": "Max credits usage limit reached."}
+
         headers = {
             "Authorization": f"Bearer {self._get_config('api_key', '')}",
             "Content-Type": "application/json",
@@ -145,6 +158,9 @@ class PerplexityAgent(AbstractConversationAgent):
         
         messages = [ {"role": "system", "content": SYSTEM_PROMPT}, {"role": "system", "content": SYSTEM_STATUS} ]
         messages.extend(user_messages)
+
+        self._history[self._history_index % len(self._history)] = ' '.join(user_message['content'] for user_message in user_messages)
+        self._history_index += 1
         
         payload = {
             "model": override_model if override_model else self._get_config(CONF_MODEL, DEFAULT_MODEL),
@@ -155,21 +171,21 @@ class PerplexityAgent(AbstractConversationAgent):
             "top_p": self._get_config(CONF_DIVERSITY, DEFAULT_DIVERSITY),
             "frequency_penalty": self._get_config(CONF_FREQUENCY_PENALTY, DEFAULT_FREQUENCY_PENALTY),
             "response_format": self.RESPONSE_FORMAT,
-            "disable_search": not self._get_config(CONF_ENABLE_WEBSEARCH, DEFAULT_ENABLE_WEBSEARCH) and not force_websearch_access
+            "disable_search": not self._get_config(CONF_ENABLE_WEBSEARCH, DEFAULT_ENABLE_WEBSEARCH) and not force_websearch_access,
+            "search_recency_filter": data_recency if data_recency else "day"
         }
         
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(BASE_URL, json=payload, headers=headers) as resp:
-                    _LOGGER.debug(f"Perplexity API raw request sent.\nRequest Headers: {headers}\nRequest Payload: {payload}")
-                    
-                    if resp.status != 200:
-                        _LOGGER.error(f"Perplexity API error: status {resp.status}. Error response: {await resp.text()}")
-                        return {"error": f"Status code: {resp.status}"}
-                    
-                    data: dict = await resp.json()
-                    _LOGGER.debug(f"Perplexity API raw response received: {data}")
-                    return data
+            async with self._session.post(BASE_URL, json=payload, headers=headers) as resp:
+                _LOGGER.debug(f"Perplexity API raw request sent.\nRequest Headers: {headers}\nRequest Payload: {payload}")
+                
+                if resp.status != 200:
+                    _LOGGER.error(f"Perplexity API error: status {resp.status}. Error response: {await resp.text()}")
+                    return {"error": f"Status code: {resp.status}"}
+                
+                data: dict = await resp.json()
+                _LOGGER.debug(f"Perplexity API raw response received: {data}")
+                return data
         except Exception as e:
             _LOGGER.error("Exception while communicating with Perplexity API: %s", e)
             return {"error": str(e)}
@@ -243,6 +259,9 @@ class PerplexityAgent(AbstractConversationAgent):
                     )
                 )
         
+            self._history[self._history_index % len(self._history)] = response_text
+            self._history_index = (self._history_index + 1) % len(self._history)
+
             # Handle ACTION commands in the response
             if (execute_actions and content.actions and self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)) or force_actions_execution:
                 for action in content.actions:
@@ -270,6 +289,7 @@ class PerplexityAgent(AbstractConversationAgent):
         execute_actions = call.data.get("execute_actions", True)
         force_actions_execution = call.data.get("force_actions_execution", False)
         enable_websearch = call.data.get("enable_websearch", None)
+        data_recency = call.data.get("data_recency", "day")
         response: dict = {"response": "", "actions": [], "error": None, "cost": 0.0}
         
         if not prompt:
@@ -277,7 +297,7 @@ class PerplexityAgent(AbstractConversationAgent):
             response['error'] = "No prompt provided."
         else:
             messages: list[dict] = [ {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | USER PROMPT: {prompt}"} ]
-            data = await self._async_send_request(messages, "AUTOMATED SERVICE CALL", override_model=model, force_websearch_access=enable_websearch)
+            data = await self._async_send_request(messages, "AUTOMATED SERVICE CALL", override_model=model, force_websearch_access=enable_websearch, data_recency=data_recency)
             response = self._process_response(data, execute_actions=execute_actions, force_actions_execution=force_actions_execution)
         
         self.hass.bus.async_fire(f"{DOMAIN}_response", {"response": response})
