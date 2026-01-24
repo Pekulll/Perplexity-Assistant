@@ -115,6 +115,14 @@
                 "model_parameters": "Paramètres du modèle",
                 "authorization": "Autorisations & Permissions"
             }
+        },
+        "data_recency_options": {
+            "options": {
+                "day": "Jour passé",
+                "week": "Semaine passée",
+                "month": "Mois passé",
+                "year": "Année passée"
+            }
         }
     },
     "options": {
@@ -219,6 +227,14 @@
                 "force_actions_execution": {
                     "name": "Forcer l'exécution des actions",
                     "description": "AVERTISSEMENT : REMPLACE LES PARAMÈTRES DE CONFIGURATION. Si activé, les actions détectées dans la réponse seront automatiquement exécutées."
+                },
+                "pass_entity_context": {
+                    "name": "Transmettre le contexte des entités",
+                    "description": "Si activé, permet à cette requête d'accéder au contexte des entités exposées de Home Assistant si l'accès aux entités est activé dans la configuration de l'intégration."
+                },
+                "data_recency": {
+                    "name": "Fraîcheur des données",
+                    "description": "Spécifiez la fraîcheur des données à utiliser dans les recherches Web. Les options incluent 'jour', 'semaine', 'mois', 'année'. Si non spécifié, la valeur par défaut est 'jour'."
                 }
             }
         }

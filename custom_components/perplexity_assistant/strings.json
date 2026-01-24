@@ -228,9 +228,13 @@
                     "name": "Force Actions Execution",
                     "description": "WARNING: OVERRIDES CONFIGURATION PARAMETERS. If enabled, actions detected in the response will be automatically executed."
                 },
+                "pass_entity_context": {
+                    "name": "Pass Entity Context",
+                    "description": "If enabled, allows this request to access the context of exposed Home Assistant entities if entity access is enabled in the integration configuration."
+                },
                 "data_recency": {
                     "name": "Data Recency",
-                    "description": "Specify the recency of the data to be used in web searches. Options include 'hour', 'day', 'week', 'month', 'year'. If not specified, defaults to 'day'."
+                    "description": "Specify the recency of the data to be used in web searches. Options include 'day', 'week', 'month', 'year'. If not specified, defaults to 'day'."
                 }
             }
         }

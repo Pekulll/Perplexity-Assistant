@@ -3,10 +3,12 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "API-Schlüssel"
+          "api_key": "API-Schlüssel",
+          "max_credits_usage": "Maximale Guthaben-Nutzung ($)"
         },
         "data_description": {
-          "api_key": "Der bereitgestellte API-Schlüssel wird verwendet, um Anfragen beim Perplexity-AI-Dienst zu authentifizieren. Format: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "Der bereitgestellte API-Schlüssel wird verwendet, um Anfragen beim Perplexity-AI-Dienst zu authentifizieren. Format: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Lege den maximalen Betrag an Guthaben (in USD) fest, der für die Perplexity-API verwendet werden darf. Nach Erreichen dieses Limits werden keine weiteren Anfragen gestellt."
         },
         "description": "Um Perplexity Assistant zu nutzen, musst du einen API-Schlüssel über [Perplexity](https://www.perplexity.ai/account/api/keys) erstellen."
       },
@@ -101,6 +103,14 @@
         "model_parameters": "Modellparameter",
         "authorization": "Berechtigungen & Freigaben"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "Letzter Tag",
+        "week": "Letzte Woche",
+        "month": "Letzter Monat",
+        "year": "Letztes Jahr"
+      }
     }
   },
   "options": {
@@ -112,10 +122,12 @@
       },
       "api": {
         "data": {
-          "api_key": "API-Schlüssel"
+          "api_key": "API-Schlüssel",
+          "max_credits_usage": "Maximale Guthaben-Nutzung ($)"
         },
         "data_description": {
-          "api_key": "Der bereitgestellte API-Schlüssel wird verwendet, um Anfragen beim Perplexity-AI-Dienst zu authentifizieren. Format: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "Der bereitgestellte API-Schlüssel wird verwendet, um Anfragen beim Perplexity-AI-Dienst zu authentifizieren. Format: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Lege den maximalen Betrag an Guthaben (in USD) fest, der für die Perplexity-API verwendet werden darf. Nach Erreichen dieses Limits werden keine weiteren Anfragen gestellt."
         },
         "description": "Um Perplexity Assistant zu nutzen, musst du einen API-Schlüssel über [Perplexity](https://www.perplexity.ai/account/api/keys) erstellen."
       },
@@ -195,6 +207,14 @@
         "force_actions_execution": {
           "name": "Ausführung von Aktionen erzwingen",
           "description": "WARNUNG: ÜBERSCHREIBT DIE KONFIGURATION. Wenn aktiviert, werden erkannte Aktionen in der Antwort automatisch ausgeführt."
+        },
+        "pass_entity_context": {
+            "name": "Entitätskontext übergeben",
+            "description": "Wenn aktiviert, kann diese Anfrage auf den Kontext der freigegebenen Home-Assistant-Entitäten zugreifen, sofern der Entitätszugriff in der Integrationskonfiguration aktiviert ist."
+        },
+        "data_recency": {
+          "name": "Aktualität der Daten",
+          "description": "Gib die Aktualität der für Websuchen verwendeten Daten an. Optionen: 'day', 'week', 'month', 'year'. Wenn nicht angegeben, ist der Standard 'day'."
         }
       }
     }

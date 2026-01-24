@@ -3,10 +3,12 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "API 키"
+          "api_key": "API 키",
+          "max_credits_usage": "최대 크레딧 사용액 ($)"
         },
         "data_description": {
-          "api_key": "제공된 API 키는 Perplexity AI 서비스 요청 인증에 사용됩니다. 형식: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "제공된 API 키는 Perplexity AI 서비스 요청 인증에 사용됩니다. 형식: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API에 사용할 수 있는 크레딧의 최대 금액(USD)을 설정합니다. 이 한도에 도달하면 추가 요청은 수행되지 않습니다."
         },
         "description": "Perplexity Assistant를 사용하려면 [Perplexity](https://www.perplexity.ai/account/api/keys)에서 API 키를 생성하세요."
       },
@@ -101,6 +103,14 @@
         "model_parameters": "모델 매개변수",
         "authorization": "권한 & 허용 범위"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "지난 하루",
+        "week": "지난 주",
+        "month": "지난 달",
+        "year": "지난 해"
+      }
     }
   },
   "options": {
@@ -112,10 +122,12 @@
       },
       "api": {
         "data": {
-          "api_key": "API 키"
+          "api_key": "API 키",
+          "max_credits_usage": "최대 크레딧 사용액 ($)"
         },
         "data_description": {
-          "api_key": "제공된 API 키는 Perplexity AI 서비스 요청 인증에 사용됩니다. 형식: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "제공된 API 키는 Perplexity AI 서비스 요청 인증에 사용됩니다. 형식: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API에 사용할 수 있는 크레딧의 최대 금액(USD)을 설정합니다. 이 한도에 도달하면 추가 요청은 수행되지 않습니다."
         },
         "description": "Perplexity Assistant를 사용하려면 [Perplexity](https://www.perplexity.ai/account/api/keys)에서 API 키를 생성하세요."
       },
@@ -195,6 +207,14 @@
         "force_actions_execution": {
           "name": "작업 실행 강제",
           "description": "경고: 구성 재정의. 활성화 시 응답에서 감지된 작업이 자동으로 실행됩니다."
+        },
+        "pass_entity_context": {
+            "name": "엔티티 컨텍스트 전달",
+            "description": "활성화하면 이 요청은 통합 구성에서 엔티티 액세스가 활성화된 경우 노출된 Home Assistant 엔티티의 컨텍스트에 액세스할 수 있습니다."
+        },
+        "data_recency": {
+          "name": "데이터 최신성",
+          "description": "웹 검색에 사용할 데이터의 최신성을 지정합니다. 옵션: 'day', 'week', 'month', 'year'. 지정하지 않으면 기본값은 'day'입니다."
         }
       }
     }

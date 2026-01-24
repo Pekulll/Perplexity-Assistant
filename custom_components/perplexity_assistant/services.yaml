@@ -33,6 +33,11 @@ ask:
       default: false
       selector:
         boolean:
+    pass_entity_context:
+      required: true
+      default: true
+      selector:
+        boolean:
     data_recency:
       required: false
       default: day

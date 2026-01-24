@@ -7,7 +7,8 @@ from homeassistant.components import tts
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (SelectSelector, BooleanSelector, NumberSelector,
                                             SelectSelectorConfig, SelectSelectorMode, TextSelector,
-                                            TextSelectorConfig, TextSelectorType)
+                                            TextSelectorConfig, TextSelectorType, EntitySelector,
+                                            EntitySelectorConfig)
 
 from .const import *
 
@@ -143,13 +144,11 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.data.update(user_input)
             return self.async_create_entry(title=f"Perplexity Assistant - {self.data[CONF_LANGUAGE]}{self.data[CONF_API_KEY][-4:]}", data=self.data)
         
-        DEFAULT_PROVIDER = tts.async_default_engine(self.hass)
+        default_provider = tts.async_default_engine(self.hass)
+        default_tts_entity = f"{default_provider}" if default_provider else DEFAULT_TTS
 
-        tts_engine_selector = TextSelector(
-            TextSelectorConfig(
-                type=TextSelectorType.TEXT,
-                autocomplete="off",
-            )
+        tts_engine_selector = EntitySelector(
+            EntitySelectorConfig(domain="tts")
         )
 
         # Define the data schema for the form
@@ -158,7 +157,7 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_ENTITIES_SUMMARY_REFRESH_RATE, default=DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE): NumberSelector({"min": 5, "step": 5, "mode": "box", "unit_of_measurement": "s", "max": 1800}),
             vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=DEFAULT_ALLOW_ACTIONS_ON_ENTITIES): BooleanSelector(),
             vol.Optional(CONF_ENABLE_RESPONSE_ON_SPEAKERS, default=DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS): BooleanSelector(),
-            vol.Required(CONF_TTS_ENGINE, default=DEFAULT_PROVIDER): tts_engine_selector,
+            vol.Required(CONF_TTS_ENGINE, default=default_tts_entity): tts_engine_selector,
             vol.Optional(CONF_NOTIFY_RESPONSE, default=DEFAULT_NOTIFY_RESPONSE): BooleanSelector(),
             vol.Optional(CONF_ENABLE_WEBSEARCH, default=DEFAULT_ENABLE_WEBSEARCH): BooleanSelector(),
         })
@@ -335,21 +334,21 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
             
 
         # Show the form to update options
-        DEFAULT_PROVIDER = tts.async_default_engine(self.hass)
+        default_provider = tts.async_default_engine(self.hass)
         # current_enable_websearch: bool = self.config_entry.options.get(CONF_ENABLE_WEBSEARCH, self.config_entry.data.get(CONF_ENABLE_WEBSEARCH, DEFAULT_ENABLE_WEBSEARCH))
         # current_allow_entities_access: bool = self.config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, self.config_entry.data.get(CONF_ALLOW_ENTITIES_ACCESS, DEFAULT_ALLOW_ENTITIES_ACCESS))
         # current_allow_actions_on_entities: bool = self.config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, self.config_entry.data.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, DEFAULT_ALLOW_ACTIONS_ON_ENTITIES))
         current_notify_response: bool = self.config_entry.options.get(CONF_NOTIFY_RESPONSE, self.config_entry.data.get(CONF_NOTIFY_RESPONSE, DEFAULT_NOTIFY_RESPONSE))
         # current_enable_response_on_speakers: bool = self.config_entry.options.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS, self.config_entry.data.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS, DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS))
         current_entities_summary_refresh_rate: int = self.config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, self.config_entry.data.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE))
-        current_tts_engine: str = self.config_entry.options.get(CONF_TTS_ENGINE, self.config_entry.data.get(CONF_TTS_ENGINE, DEFAULT_PROVIDER))
-
-        tts_engine_selector = TextSelector(
-            TextSelectorConfig(
-                type=TextSelectorType.TEXT,
-                autocomplete="off",
-            )
+        current_tts_engine: str = self.config_entry.options.get(
+            CONF_TTS_ENGINE,
+            self.config_entry.data.get(CONF_TTS_ENGINE, f"tts.{default_provider}" if default_provider else DEFAULT_TTS),
         )
+        if isinstance(current_tts_engine, str) and "." not in current_tts_engine:
+            current_tts_engine = f"tts.{current_tts_engine}"
+
+        tts_engine_selector = EntitySelector(EntitySelectorConfig(domain="tts"))
 
         # Define the options schema with current values as defaults
         options_schema = vol.Schema({

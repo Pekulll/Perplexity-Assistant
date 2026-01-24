@@ -2,7 +2,7 @@
 	<h1>Perplexity Assistant for Home Assistant</h1>
 	<p>Your privacy-friendly AI helper powered by <a href="https://www.perplexity.ai/">Perplexity AI</a>, integrated directly into Home Assistant.</p>
 	<p>
-		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.2.0 • <strong>Integration Type:</strong> Service
+		<strong>Status:</strong> Experimental • <strong>Version:</strong> 1.3.0 • <strong>Integration Type:</strong> Service
 	</p>
 </div>
 
@@ -49,10 +49,12 @@ Before installing:
 2. Restart Home Assistant.
 3. Go to: Settings → Devices & Services → Add Integration → Search for "Perplexity Assistant".
 4. Enter your API key and desired options.
-5. Finish the flow — the integration sets up the conversation agent and sensors (if enabled).
+5. Finish the flow — the integration sets up the conversation agent and sensors.
 
 ### HACS (Planned)
-HACS support is not yet published.
+*Coming soon! The integration will be available via HACS for easier installation and updates.*
+
+> In the meantime, please you can manually add the repository to HACS for easier management.
 
 ## ⚙️ Configuration (Initial Flow)
 
@@ -89,6 +91,7 @@ The integration exposes a single service to send ad‑hoc prompts with optional 
 | `enable_websearch` | boolean | no | Forces web search on/off regardless of global setting (true = enable; false = disable). |
 | `execute_actions` | boolean | no | If true, any valid detected ACTION lines are executed (subject to global allow actions). |
 | `force_actions_execution` | boolean | no | Hard override: executes detected actions even if global actions are disabled. Use cautiously. |
+| `pass_entity_context` | boolean | no | If true, this request can access exposed Home Assistant entity context if entity access is enabled in integration config. |
 | `data_recency` | string | no | Define the recency of the information from websearch |
 
 ### Example: Developer Tools Service Call
@@ -114,18 +117,30 @@ script:
 
 ### Example: Automation Triggered by Time
 ```yaml
-automation:
-  - alias: Morning News
-    trigger:
-      - platform: time
-        at: "07:30:00"
-    action:
-      - service: perplexity_assistant.ask
-        data:
-          prompt: "Give me a concise news report for the last 24 hours. Include 3 to 4 news."
-          execute_actions: false
-          enable_websearch: true
-          data_recency: "day"
+alias: Morning News
+description: ""
+triggers:
+  - at: "07:30:00"
+    trigger: time
+conditions: []
+actions:
+  - data:
+      prompt: >-
+        Give me a concise news report in simple but complete sentence. Include
+        at two local news (from the country of the user) at first and one
+        international news. Only include the news in the respoinse not any other
+        sentence.
+      execute_actions: false
+      enable_websearch: true
+      data_recency: day
+    action: perplexity_assistant.ask
+    response_variable: news
+  - action: notify.notify
+    metadata: {}
+    data:
+      message: "{{news.response}}"
+      title: Today's News
+mode: single
 ```
 
 ### Safety Notes
@@ -164,6 +179,17 @@ Two diagnostic sensors are created:
 | `sensor.perplexity_bill` | Aggregates total cost across all usage. |
 
 > Cost values are based on the `usage.cost.total_cost` field in responses. If API cost data changes or is unavailable these may remain 0 or inaccurate.
+
+## 🔘 Switches
+
+These toggles are available as swicthes. They control runtime behavior.
+
+| Switch Name | Description |
+|-------------|-------------|
+| `switch.perplexity_assistant_entity_access` | Enables/disables entity access globally. |
+| `switch.perplexity_assistant_action_execution` | Enables/disables action execution globally. |
+| `switch.perplexity_assistant_websearch` | Enables/disables websearch globally. |
+| `switch.perplexity_assistant_vocal_responses` | Enables/disables vocal responses globally. |
 
 ## 🔐 Privacy & Safety
 
@@ -205,7 +231,7 @@ README.md                		 # Documentation
 2. Create a feature branch: `git checkout -b feat/your-feature`.
 3. Make changes + add/update tests.
 4. Run formatting (e.g., `ruff`, `black`) as desired.
-5. Submit a PR with a clear description.
+5. Submit a PR with a clear description to the dev branch.
 
 ### Release & Versioning
 Uses semantic versioning: `MAJOR.MINOR.PATCH`.
@@ -234,9 +260,10 @@ logger:
 
 ## 🗺 Roadmap
 
+* [TESTING] Conversation memory.
 * [WIP] HACS distribution.
-* [WIP] More translation + localization improvements.
-* Conversation memory.
+* Attachments support.
+* Granular action permissions (per-entity/type).
 * Optional streaming mode (real-time tokens).
 * Request counter sensor.
 

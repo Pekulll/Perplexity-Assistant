@@ -3,10 +3,12 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "Chiave API"
+          "api_key": "Chiave API",
+          "max_credits_usage": "Utilizzo massimo crediti ($)"
         },
         "data_description": {
-          "api_key": "La chiave API fornita verrà utilizzata per autenticare le richieste al servizio Perplexity AI. Formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "La chiave API fornita verrà utilizzata per autenticare le richieste al servizio Perplexity AI. Formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Imposta l'importo massimo di crediti (in USD) utilizzabile per l'API di Perplexity. Raggiunto questo limite, non verranno effettuate ulteriori richieste."
         },
         "description": "Per usare Perplexity Assistant, genera una chiave API da [Perplexity](https://www.perplexity.ai/account/api/keys)."
       },
@@ -101,6 +103,14 @@
         "model_parameters": "Parametri del modello",
         "authorization": "Autorizzazioni & Permessi"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "Ultimo giorno",
+        "week": "Ultima settimana",
+        "month": "Ultimo mese",
+        "year": "Ultimo anno"
+      }
     }
   },
   "options": {
@@ -112,10 +122,12 @@
       },
       "api": {
         "data": {
-          "api_key": "Chiave API"
+          "api_key": "Chiave API",
+          "max_credits_usage": "Utilizzo massimo crediti ($)"
         },
         "data_description": {
-          "api_key": "La chiave API fornita verrà utilizzata per autenticare le richieste al servizio Perplexity AI. Formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "La chiave API fornita verrà utilizzata per autenticare le richieste al servizio Perplexity AI. Formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Imposta l'importo massimo di crediti (in USD) utilizzabile per l'API di Perplexity. Raggiunto questo limite, non verranno effettuate ulteriori richieste."
         },
         "description": "Per usare Perplexity Assistant, genera una chiave API da [Perplexity](https://www.perplexity.ai/account/api/keys)."
       },
@@ -195,6 +207,14 @@
         "force_actions_execution": {
           "name": "Forza esecuzione azioni",
           "description": "ATTENZIONE: SOVRASCRIVE LA CONFIGURAZIONE. Se abilitato, le azioni rilevate nella risposta verranno eseguite automaticamente."
+        },
+        "pass_entity_context": {
+            "name": "Passa contesto entità",
+            "description": "Se abilitato, consente a questa richiesta di accedere al contesto delle entità di Home Assistant esposte se l'accesso alle entità è abilitato nella configurazione dell'integrazione."
+        },
+        "data_recency": {
+          "name": "Freschezza dei dati",
+          "description": "Specifica la freschezza dei dati da utilizzare nelle ricerche web. Le opzioni includono 'day', 'week', 'month', 'year'. Se non specificato, il valore predefinito è 'day'."
         }
       }
     }

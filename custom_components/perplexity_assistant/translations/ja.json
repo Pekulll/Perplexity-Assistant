@@ -3,10 +3,12 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "APIキー"
+          "api_key": "APIキー",
+          "max_credits_usage": "クレジット使用上限 ($)"
         },
         "data_description": {
-          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API に使用できるクレジットの上限額 (USD) を設定します。この上限に達すると、それ以上のリクエストは実行されません。"
         },
         "description": "Perplexity Assistantを使用するには、[Perplexity](https://www.perplexity.ai/account/api/keys)でAPIキーを生成してください。"
       },
@@ -101,6 +103,14 @@
         "model_parameters": "モデルパラメータ",
         "authorization": "権限 & 許可"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "過去1日",
+        "week": "過去1週間",
+        "month": "過去1か月",
+        "year": "過去1年"
+      }
     }
   },
   "options": {
@@ -112,10 +122,12 @@
       },
       "api": {
         "data": {
-          "api_key": "APIキー"
+          "api_key": "APIキー",
+          "max_credits_usage": "クレジット使用上限 ($)"
         },
         "data_description": {
-          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API に使用できるクレジットの上限額 (USD) を設定します。この上限に達すると、それ以上のリクエストは実行されません。"
         },
         "description": "Perplexity Assistantを使用するには、[Perplexity](https://www.perplexity.ai/account/api/keys)でAPIキーを生成してください。"
       },
@@ -195,6 +207,14 @@
         "force_actions_execution": {
           "name": "アクションの実行を強制",
           "description": "警告: 設定を上書きします。有効な場合、応答内で検出されたアクションが自動的に実行されます。"
+        },
+        "pass_entity_context": {
+            "name": "エンティティコンテキストを渡す",
+            "description": "有効にすると、このリクエストは統合設定でエンティティアクセスが有効になっている場合に、公開されている Home Assistant エンティティのコンテキストにアクセスできます。"
+        },
+        "data_recency": {
+          "name": "データの新しさ",
+          "description": "Web 検索で使用するデータの新しさを指定します。選択肢は 'day'、'week'、'month'、'year' です。未指定の場合は 'day' が既定です。"
         }
       }
     }

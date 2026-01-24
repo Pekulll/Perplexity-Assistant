@@ -121,7 +121,7 @@ class PerplexityAgent(AbstractConversationAgent):
         return summary
 
 
-    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None) -> dict:
+    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None, pass_entity_context: bool = True) -> dict:
         """Send a request to the Perplexity API.
 
         Args:
@@ -154,7 +154,12 @@ class PerplexityAgent(AbstractConversationAgent):
         if entity_access_switch:
             allow_entities_access = entity_access_switch.is_on
 
-        entities_summary: str = "Access not allowed." if not allow_entities_access else self._generate_entities_summary()
+        entities_summary: str = "Access not allowed." if not allow_entities_access or not pass_entity_context else self._generate_entities_summary()
+        
+        action_authorization: bool = self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, DEFAULT_ALLOW_ACTIONS_ON_ENTITIES)
+        action_authorization_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_actions_switch")
+        if action_authorization_switch:
+            action_authorization = action_authorization_switch.is_on
         
         SYSTEM_STATUS = f"""
             DATE & TIME: {datetime.now()}
@@ -163,7 +168,7 @@ class PerplexityAgent(AbstractConversationAgent):
             YOUR NAME IS {self.agent_name}
             AUTHORIZATIONS
                 - enable_vocal_notifications={self._get_config(CONF_ENABLE_RESPONSE_ON_SPEAKERS, DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS)}
-                - enable_actions_on_entities={self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, DEFAULT_ALLOW_ACTIONS_ON_ENTITIES)}
+                - enable_actions_on_entities={action_authorization}
             USER NAME: {username}
             USER LANGUAGE: {self._get_config(CONF_LANGUAGE, 'en')}
             """
@@ -231,7 +236,7 @@ class PerplexityAgent(AbstractConversationAgent):
                     "media_player_entity_id": tts_data.get("media_player_entity_id") or tts_data.get("entity_id") or action.target,
                     "message": tts_data.get("message", response_text),
                     "cache": False,
-                    "entity_id": DEFAULT_TTS
+                    "entity_id": self._get_config(CONF_TTS_ENGINE, DEFAULT_TTS)
                 }
                 
                 await self.hass.services.async_call(action.domain, action.service, tts_data)
@@ -317,6 +322,7 @@ class PerplexityAgent(AbstractConversationAgent):
         execute_actions = call.data.get("execute_actions", True)
         force_actions_execution = call.data.get("force_actions_execution", False)
         enable_websearch = call.data.get("enable_websearch", None)
+        pass_entity_context = call.data.get("pass_entity_context", True)
         data_recency = call.data.get("data_recency", "day")
         response: dict = {"response": "", "actions": [], "error": None, "cost": 0.0}
         
@@ -325,7 +331,8 @@ class PerplexityAgent(AbstractConversationAgent):
             response['error'] = "No prompt provided."
         else:
             messages: list[dict] = [ {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | USER PROMPT: {prompt}"} ]
-            data = await self._async_send_request(messages, "AUTOMATED SERVICE CALL", override_model=model, force_websearch_access=enable_websearch, data_recency=data_recency)
+            data = await self._async_send_request(messages, "AUTOMATED SERVICE CALL", override_model=model,
+                                                  force_websearch_access=enable_websearch, data_recency=data_recency, pass_entity_context=pass_entity_context)
             response = self._process_response(data, execute_actions=execute_actions, force_actions_execution=force_actions_execution)
         
         self.hass.bus.async_fire(f"{DOMAIN}_response", {"response": response})
