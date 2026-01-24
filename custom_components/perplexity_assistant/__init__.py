@@ -13,7 +13,7 @@ from .conversation import PerplexityAgent
 from .const import *
 
 # Platforms we set up when requested
-PLATFORMS: list[str] = ["sensor"]
+PLATFORMS: list[str] = ["sensor", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -72,6 +72,18 @@
       "single_instance_allowed": "仅允许一个 Perplexity Assistant 实例。"
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "每月费用" },
+      "total_cost": { "name": "总费用" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "语音通知" },
+      "web_search": { "name": "网页搜索" },
+      "entity_actions": { "name": "实体操作" },
+      "entity_access": { "name": "实体访问" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {

@@ -72,6 +72,18 @@
       "single_instance_allowed": "Slechts één instantie van Perplexity Assistant is toegestaan."
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "Maandelijkse kosten" },
+      "total_cost": { "name": "Totale kosten" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "Spraakmeldingen" },
+      "web_search": { "name": "Webzoekopdracht" },
+      "entity_actions": { "name": "Entiteitshandelingen" },
+      "entity_access": { "name": "Toegang tot entiteiten" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {

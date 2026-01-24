@@ -72,6 +72,18 @@
       "single_instance_allowed": "Perplexity Assistantのインスタンスは1つのみ許可されます。"
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "月額コスト" },
+      "total_cost": { "name": "合計コスト" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "音声通知" },
+      "web_search": { "name": "ウェブ検索" },
+      "entity_actions": { "name": "エンティティ操作" },
+      "entity_access": { "name": "エンティティへのアクセス" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {

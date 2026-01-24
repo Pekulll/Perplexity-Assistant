@@ -64,6 +64,7 @@ class PerplexityAgent(AbstractConversationAgent):
         self._session: aiohttp.ClientSession = aiohttp_client.async_get_clientsession(hass)
         self._history: list[str] = ['', '', '', '', '', '']
         self._history_index: int = 0
+        self._last_conversation_id: str | None = None
     
     def _get_config(self, key: str, default: Any = None) -> Any:
         """Helper to get configuration options with a default.
@@ -106,8 +107,8 @@ class PerplexityAgent(AbstractConversationAgent):
         summary = f"The Home Assistant instance has {len(entities)} entities."
                 
         for entity in entities:
-            if not async_should_expose(self.hass, DOMAIN, entity.entity_id):
-                continue
+            # if not async_should_expose(self.hass, DOMAIN, entity.entity_id):
+            #     continue
 
             ha_entity = ha_entity_registry.async_get(entity.entity_id) # Get entity registry entry (to access unique_id)
             ha_device = ha_device_registry.async_get(ha_entity.device_id) if ha_entity else None # Get device using unique_id
@@ -131,10 +132,16 @@ class PerplexityAgent(AbstractConversationAgent):
         Returns:
             dict: The response from the Perplexity API.
         """
+        
+        state_obj = self.hass.states.get(f"sensor.{DOMAIN}_perplexity_monthly_bill")
 
-        if self._get_config(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE) >= self.hass.data.get("perplexity_assistant_sensors", {}).get("monthly_bill_sensor").current_cost:
-            _LOGGER.warning("Max credits usage limit reached. Aborting request to Perplexity API.")
-            return {"error": "Max credits usage limit reached."}
+        if state_obj:
+            current_bill = state_obj.state 
+            bill_value = float(current_bill) if current_bill not in ("unknown", "unavailable") else 0.0
+
+            if self._get_config(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE) >= bill_value:
+                _LOGGER.warning("Max credits usage limit reached. Aborting request to Perplexity API.")
+                return {"error": "Max credits usage limit reached."}
 
         headers = {
             "Authorization": f"Bearer {self._get_config('api_key', '')}",
@@ -142,7 +149,12 @@ class PerplexityAgent(AbstractConversationAgent):
             "User-Agent": f"HomeAssistant/{HA_VERSION}"
         }
         
-        entities_summary: str = "Access not allowed." if not self._get_config(CONF_ALLOW_ENTITIES_ACCESS, DEFAULT_ALLOW_ENTITIES_ACCESS) else self._generate_entities_summary()
+        allow_entities_access = self._get_config(CONF_ALLOW_ENTITIES_ACCESS, DEFAULT_ALLOW_ENTITIES_ACCESS)
+        entity_access_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_access_switch")
+        if entity_access_switch:
+            allow_entities_access = entity_access_switch.is_on
+
+        entities_summary: str = "Access not allowed." if not allow_entities_access else self._generate_entities_summary()
         
         SYSTEM_STATUS = f"""
             DATE & TIME: {datetime.now()}
@@ -162,6 +174,12 @@ class PerplexityAgent(AbstractConversationAgent):
         self._history[self._history_index % len(self._history)] = ' '.join(user_message['content'] for user_message in user_messages)
         self._history_index += 1
         
+        enable_websearch = DEFAULT_ENABLE_WEBSEARCH
+        web_search_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("web_search_switch")
+        
+        if web_search_switch:
+            enable_websearch = web_search_switch.is_on
+            
         payload = {
             "model": override_model if override_model else self._get_config(CONF_MODEL, DEFAULT_MODEL),
             "messages": messages,
@@ -171,7 +189,7 @@ class PerplexityAgent(AbstractConversationAgent):
             "top_p": self._get_config(CONF_DIVERSITY, DEFAULT_DIVERSITY),
             "frequency_penalty": self._get_config(CONF_FREQUENCY_PENALTY, DEFAULT_FREQUENCY_PENALTY),
             "response_format": self.RESPONSE_FORMAT,
-            "disable_search": not self._get_config(CONF_ENABLE_WEBSEARCH, DEFAULT_ENABLE_WEBSEARCH) and not force_websearch_access,
+            "disable_search": not enable_websearch and not force_websearch_access,
             "search_recency_filter": data_recency if data_recency else "day"
         }
         
@@ -202,6 +220,11 @@ class PerplexityAgent(AbstractConversationAgent):
                 
         try:
             if action.domain == "tts" and action.service == "speak" and self._get_config(CONF_ENABLE_RESPONSE_ON_SPEAKERS, False):
+                voice_notifications_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("voice_notification_switch")
+                if voice_notifications_switch and not voice_notifications_switch.is_on:
+                    _LOGGER.debug("Voice notifications are disabled. Skipping TTS action execution.")
+                    return
+                
                 # Special handling for TTS actions to format parameters correctly
                 tts_data = action.parameters or {}
                 tts_data = {
@@ -263,7 +286,12 @@ class PerplexityAgent(AbstractConversationAgent):
             self._history_index = (self._history_index + 1) % len(self._history)
 
             # Handle ACTION commands in the response
-            if (execute_actions and content.actions and self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)) or force_actions_execution:
+            allow_actions = self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
+            actions_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_actions_switch")
+            if actions_switch:
+                allow_actions = actions_switch.is_on
+            
+            if (execute_actions and content.actions and allow_actions) or force_actions_execution:
                 for action in content.actions:
                     # Schedule coroutine on HA's event loop (non-blocking)
                     self.hass.async_create_task(self._execute_action(action, response_text))
@@ -316,6 +344,11 @@ class PerplexityAgent(AbstractConversationAgent):
         # Get config entry options
         prompt: str = user_input.text
         user_name = "UNKNOWN"
+        
+        if user_input.conversation_id != self._last_conversation_id:
+            self._history = ['', '', '', '', '', '']
+            self._history_index = 0
+            self._last_conversation_id = user_input.conversation_id
 
         if user_input.context and user_input.context.user_id:
             user = await self.hass.auth.async_get_user(user_input.context.user_id)

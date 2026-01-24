@@ -72,6 +72,18 @@
       "single_instance_allowed": "Perplexity Assistant 인스턴스는 하나만 허용됩니다."
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "월간 비용" },
+      "total_cost": { "name": "총 비용" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "음성 알림" },
+      "web_search": { "name": "웹 검색" },
+      "entity_actions": { "name": "엔티티 작업" },
+      "entity_access": { "name": "엔티티 액세스" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {

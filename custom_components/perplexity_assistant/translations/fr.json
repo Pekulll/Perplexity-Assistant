@@ -74,6 +74,30 @@
             "single_instance_allowed": "Une seule instance de l'assistant Perplexity est autorisée."
         }
     },
+    "entity": {
+        "sensor": {
+            "monthly_bill": {
+                "name": "Coût mensuel"
+            },
+            "total_cost": {
+                "name": "Coût total"
+            }
+        },
+        "switch": {
+            "voice_notifications": {
+                "name": "Notifications vocales"
+            },
+            "entity_actions": {
+                "name": "Actions sur les entités"
+            },
+            "web_search": {
+                "name": "Recherche Web"
+            },
+            "entity_access": {
+                "name": "Accès aux entités"
+            }
+        }
+    },
     "selector": {
         "model_options": {
             "options": {
