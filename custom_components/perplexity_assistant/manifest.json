@@ -1,11 +1,11 @@
 {
   "domain": "perplexity_assistant",
   "name": "Perplexity Assistant",
-  "config_flow": true,
-  "integration_type": "service",
   "codeowners": ["@Pekulll"],
-  "iot_class": "cloud_polling",
+  "config_flow": true,
   "documentation": "https://github.com/Pekulll/perplexity-assistant",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/Pekulll/perplexity-assistant/issues",
   "requirements": ["requests", "aiohttp", "pydantic"],
   "version": "1.3.0"
