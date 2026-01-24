@@ -52,9 +52,8 @@ Before installing:
 5. Finish the flow — the integration sets up the conversation agent and sensors.
 
 ### HACS (Planned)
-*Coming soon! The integration will be available via HACS for easier installation and updates.*
-
-> In the meantime, please you can manually add the repository to HACS for easier management.
+*Coming soon! The integration will be available via HACS for easier installation and updates.
+In the meantime, you can manually add the repository to HACS for easier management.*
 
 ## ⚙️ Configuration (Initial Flow)
 
@@ -231,7 +230,7 @@ README.md                		 # Documentation
 2. Create a feature branch: `git checkout -b feat/your-feature`.
 3. Make changes + add/update tests.
 4. Run formatting (e.g., `ruff`, `black`) as desired.
-5. Submit a PR with a clear description to the dev branch.
+5. Submit a PR with a clear description to the `dev` branch.
 
 ### Release & Versioning
 Uses semantic versioning: `MAJOR.MINOR.PATCH`.
