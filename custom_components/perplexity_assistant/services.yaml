@@ -33,4 +33,21 @@ ask:
       default: false
       selector:
         boolean:
+    pass_entity_context:
+      required: true
+      default: true
+      selector:
+        boolean:
+    data_recency:
+      required: false
+      default: day
+      selector:
+        select:
+          options:
+            - day
+            - week
+            - month
+            - year
+          translation_key: data_recency_options
+          mode: dropdown
 

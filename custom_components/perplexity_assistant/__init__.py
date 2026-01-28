@@ -13,7 +13,7 @@ from .conversation import PerplexityAgent
 from .const import *
 
 # Platforms we set up when requested
-PLATFORMS: list[str] = ["sensor"]
+PLATFORMS: list[str] = ["sensor", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,7 +61,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         vol.Optional("model"): cv.string,
         vol.Optional("enable_websearch"): cv.boolean,
         vol.Optional("execute_actions"): cv.boolean,
-        vol.Optional("force_actions_execution"): cv.boolean
+        vol.Optional("force_actions_execution"): cv.boolean,
+        vol.Optional("pass_entity_context"): cv.boolean,
+        vol.Optional("data_recency"): vol.In(["day", "week", "month", "year"])
     })
     
     hass.services.async_register(DOMAIN, "ask", agent.async_ask, schema=service_schema, supports_response="optional")
