@@ -91,7 +91,7 @@ The integration exposes a single service to send ad‑hoc prompts with optional 
 | `execute_actions` | boolean | no | If true, any valid detected ACTION lines are executed (subject to global allow actions). |
 | `force_actions_execution` | boolean | no | Hard override: executes detected actions even if global actions are disabled. Use cautiously. |
 | `pass_entity_context` | boolean | no | If true, this request can access exposed Home Assistant entity context if entity access is enabled in integration config. |
-| `data_recency` | string | no | Define the recency of the information from websearch |
+| `data_recency` | string | no | Defines how recent websearch results should be. Allowed values: `day`, `week`, `month`, `year`. Defaults to `day` if omitted. |
 
 ### Example: Developer Tools Service Call
 ```yaml

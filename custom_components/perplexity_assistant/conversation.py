@@ -123,7 +123,7 @@ class PerplexityAgent(AbstractConversationAgent):
         return summary
 
 
-    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", prompt: str | None = None, override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None, pass_entity_context: bool = True) -> dict:
+    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", prompt: str | None = None, override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = 'day', pass_entity_context: bool = True) -> dict:
         """Send a request to the Perplexity API.
 
         Args:
