@@ -335,11 +335,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
 
         # Show the form to update options
         default_provider = tts.async_default_engine(self.hass)
-        # current_enable_websearch: bool = self.config_entry.options.get(CONF_ENABLE_WEBSEARCH, self.config_entry.data.get(CONF_ENABLE_WEBSEARCH, DEFAULT_ENABLE_WEBSEARCH))
-        # current_allow_entities_access: bool = self.config_entry.options.get(CONF_ALLOW_ENTITIES_ACCESS, self.config_entry.data.get(CONF_ALLOW_ENTITIES_ACCESS, DEFAULT_ALLOW_ENTITIES_ACCESS))
-        # current_allow_actions_on_entities: bool = self.config_entry.options.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, self.config_entry.data.get(CONF_ALLOW_ACTIONS_ON_ENTITIES, DEFAULT_ALLOW_ACTIONS_ON_ENTITIES))
         current_notify_response: bool = self.config_entry.options.get(CONF_NOTIFY_RESPONSE, self.config_entry.data.get(CONF_NOTIFY_RESPONSE, DEFAULT_NOTIFY_RESPONSE))
-        # current_enable_response_on_speakers: bool = self.config_entry.options.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS, self.config_entry.data.get(CONF_ENABLE_RESPONSE_ON_SPEAKERS, DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS))
         current_entities_summary_refresh_rate: int = self.config_entry.options.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, self.config_entry.data.get(CONF_ENTITIES_SUMMARY_REFRESH_RATE, DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE))
         current_tts_engine: str = self.config_entry.options.get(
             CONF_TTS_ENGINE,
@@ -352,13 +348,9 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
 
         # Define the options schema with current values as defaults
         options_schema = vol.Schema({
-            # vol.Optional(CONF_ALLOW_ENTITIES_ACCESS, default=current_allow_entities_access): BooleanSelector(),
             vol.Required(CONF_ENTITIES_SUMMARY_REFRESH_RATE, default=current_entities_summary_refresh_rate): NumberSelector({"min": 5, "step": 5, "mode": "box", "unit_of_measurement": "s", "max": 1800}),
-            # vol.Optional(CONF_ALLOW_ACTIONS_ON_ENTITIES, default=current_allow_actions_on_entities): BooleanSelector(),
-            # vol.Optional(CONF_ENABLE_RESPONSE_ON_SPEAKERS, default=current_enable_response_on_speakers): BooleanSelector(),
             vol.Required(CONF_TTS_ENGINE, default=current_tts_engine): tts_engine_selector,
             vol.Optional(CONF_NOTIFY_RESPONSE, default=current_notify_response): BooleanSelector(),
-            # vol.Optional(CONF_ENABLE_WEBSEARCH, default=current_enable_websearch): BooleanSelector(),
         })
 
         return self.async_show_form(step_id="authorization", data_schema=options_schema,)

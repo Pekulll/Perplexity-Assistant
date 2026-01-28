@@ -7,9 +7,9 @@ from datetime import datetime
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.conversation import AbstractConversationAgent, ConversationInput, ConversationResult
 from homeassistant.core import ServiceCall, HomeAssistant
+from homeassistant.components.homeassistant.exposed_entities import async_should_expose
 from homeassistant.helpers import device_registry, entity_registry, aiohttp_client
 from homeassistant.helpers.intent import IntentResponse
-from homeassistant.components.homeassistant.exposed_entities import async_should_expose
 from homeassistant.const import __version__ as HA_VERSION
 from pydantic import BaseModel
 from typing import List, Optional, Any
@@ -105,23 +105,25 @@ class PerplexityAgent(AbstractConversationAgent):
         ha_device_registry = device_registry.async_get(self.hass) # Get device registry
         
         summary = f"The Home Assistant instance has {len(entities)} entities."
+        entities_simplified = []
                 
         for entity in entities:
-            # if not async_should_expose(self.hass, DOMAIN, entity.entity_id):
-            #     continue
+            if not async_should_expose(self.hass, 'conversation', entity.entity_id):
+                continue
 
             ha_entity = ha_entity_registry.async_get(entity.entity_id) # Get entity registry entry (to access unique_id)
             ha_device = ha_device_registry.async_get(ha_entity.device_id) if ha_entity else None # Get device using unique_id
             room = ha_device.area_id if ha_device and hasattr(ha_device, "area_id") else None # Get area_id safely
-                
-            summary += f"\n- {entity.entity_id}: {entity.state} (in room: {room})"
+            
+            entities_simplified.append(f"{entity.entity_id}: {entity.state} (in room: {room})")
         
+        summary += " The entities are as follows: " + "; ".join(entities_simplified) + "."
         self._summary = summary
         self._last_summary_update = datetime.now()
         return summary
 
 
-    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None, pass_entity_context: bool = True) -> dict:
+    async def _async_send_request(self, user_messages: list[dict], username: str = "UNKNOWN", prompt: str | None = None, override_model: str | None = None, force_websearch_access: bool = False, data_recency: str | None = None, pass_entity_context: bool = True) -> dict:
         """Send a request to the Perplexity API.
 
         Args:
@@ -133,15 +135,17 @@ class PerplexityAgent(AbstractConversationAgent):
             dict: The response from the Perplexity API.
         """
         
-        state_obj = self.hass.states.get(f"sensor.{DOMAIN}_perplexity_monthly_bill")
+        state_obj = self.hass.data.get("perplexity_assistant_sensors", {}).get("monthly_bill_sensor")
 
         if state_obj:
             current_bill = state_obj.state 
             bill_value = float(current_bill) if current_bill not in ("unknown", "unavailable") else 0.0
 
-            if self._get_config(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE) >= bill_value:
+            if bill_value >= self._get_config(CONF_MAX_CREDITS_USAGE, DEFAULT_MAX_CREDITS_USAGE):
                 _LOGGER.warning("Max credits usage limit reached. Aborting request to Perplexity API.")
                 return {"error": "Max credits usage limit reached."}
+        else:
+            _LOGGER.warning("Monthly bill sensor not found. Skipping credits usage check.")
 
         headers = {
             "Authorization": f"Bearer {self._get_config('api_key', '')}",
@@ -150,14 +154,14 @@ class PerplexityAgent(AbstractConversationAgent):
         }
         
         allow_entities_access = self._get_config(CONF_ALLOW_ENTITIES_ACCESS, DEFAULT_ALLOW_ENTITIES_ACCESS)
-        entity_access_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_access_switch")
+        entity_access_switch = self.hass.data.get("perplexity_assistant_switches", {}).get("entity_access_switch")
         if entity_access_switch:
             allow_entities_access = entity_access_switch.is_on
 
         entities_summary: str = "Access not allowed." if not allow_entities_access or not pass_entity_context else self._generate_entities_summary()
         
         action_authorization: bool = self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, DEFAULT_ALLOW_ACTIONS_ON_ENTITIES)
-        action_authorization_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_actions_switch")
+        action_authorization_switch = self.hass.data.get("perplexity_assistant_switches", {}).get("entity_actions_switch")
         if action_authorization_switch:
             action_authorization = action_authorization_switch.is_on
         
@@ -172,15 +176,16 @@ class PerplexityAgent(AbstractConversationAgent):
             USER NAME: {username}
             USER LANGUAGE: {self._get_config(CONF_LANGUAGE, 'en')}
             """
+            
+        
+        self._history[self._history_index % len(self._history)] = prompt if prompt else ""
+        self._history_index += 1
         
         messages = [ {"role": "system", "content": SYSTEM_PROMPT}, {"role": "system", "content": SYSTEM_STATUS} ]
         messages.extend(user_messages)
-
-        self._history[self._history_index % len(self._history)] = ' '.join(user_message['content'] for user_message in user_messages)
-        self._history_index += 1
         
         enable_websearch = DEFAULT_ENABLE_WEBSEARCH
-        web_search_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("web_search_switch")
+        web_search_switch = self.hass.data.get("perplexity_assistant_switches", {}).get("web_search_switch")
         
         if web_search_switch:
             enable_websearch = web_search_switch.is_on
@@ -225,7 +230,7 @@ class PerplexityAgent(AbstractConversationAgent):
                 
         try:
             if action.domain == "tts" and action.service == "speak" and self._get_config(CONF_ENABLE_RESPONSE_ON_SPEAKERS, False):
-                voice_notifications_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("voice_notification_switch")
+                voice_notifications_switch = self.hass.data.get("perplexity_assistant_switches", {}).get("voice_notification_switch")
                 if voice_notifications_switch and not voice_notifications_switch.is_on:
                     _LOGGER.debug("Voice notifications are disabled. Skipping TTS action execution.")
                     return
@@ -292,7 +297,7 @@ class PerplexityAgent(AbstractConversationAgent):
 
             # Handle ACTION commands in the response
             allow_actions = self._get_config(CONF_ALLOW_ACTIONS_ON_ENTITIES, False)
-            actions_switch = self.hass.data.get("perplexity_assistant_sensors", {}).get("entity_actions_switch")
+            actions_switch = self.hass.data.get("perplexity_assistant_switches", {}).get("entity_actions_switch")
             if actions_switch:
                 allow_actions = actions_switch.is_on
             
@@ -351,18 +356,17 @@ class PerplexityAgent(AbstractConversationAgent):
         # Get config entry options
         prompt: str = user_input.text
         user_name = "UNKNOWN"
-        
-        if user_input.conversation_id != self._last_conversation_id:
-            self._history = ['', '', '', '', '', '']
-            self._history_index = 0
-            self._last_conversation_id = user_input.conversation_id
 
         if user_input.context and user_input.context.user_id:
             user = await self.hass.auth.async_get_user(user_input.context.user_id)
             user_name = user.name if user else "UNKNOWN"
         
-        user_messages: list[dict] = [ {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | USER PROMPT: {prompt}"} ]
-        data: dict = await self._async_send_request(user_messages, user_name)
+        HISTORY = " -- ".join([msg for msg in self._history if msg])
+        HISTORY_PROMPT = f"{HISTORY}" if HISTORY else "No previous conversation history."
+        _LOGGER.warning(f"Sending request to Perplexity API with history: {HISTORY_PROMPT} | prompt: {prompt}")
+        
+        user_messages: list[dict] = [ {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | CONVERSATION HISTORY: {HISTORY_PROMPT} | USER PROMPT: {prompt}"} ]
+        data: dict = await self._async_send_request(user_messages, user_name, prompt=prompt)
         processed_response: dict = self._process_response(data)
 
         response = IntentResponse(language=self._get_config(CONF_LANGUAGE, DEFAULT_LANGUAGE))

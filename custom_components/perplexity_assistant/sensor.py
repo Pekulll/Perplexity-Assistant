@@ -11,7 +11,6 @@ import logging
 
 from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
@@ -83,7 +82,9 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
         now = datetime.now()
 
         if now.month != self._last_reset.month or now.year != self._last_reset.year:
-            return 0.0
+            self._attr_native_value = 0.0
+            self._last_reset = now.replace(day=1, hour=0, minute=0, second=0)
+            self._attr_extra_state_attributes = {"last_reset_month": self._last_reset}
             
         return round(self._attr_native_value, 4)
     

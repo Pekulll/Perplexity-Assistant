@@ -24,10 +24,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     
     async_add_entities([voice_notification_switch, web_search_switch, entity_actions_switch, entity_access_switch])
     
-    hass.data.setdefault("perplexity_assistant_sensors", {})["voice_notification_switch"] = voice_notification_switch
-    hass.data.setdefault("perplexity_assistant_sensors", {})["web_search_switch"] = web_search_switch
-    hass.data.setdefault("perplexity_assistant_sensors", {})["entity_actions_switch"] = entity_actions_switch
-    hass.data.setdefault("perplexity_assistant_sensors", {})["entity_access_switch"] = entity_access_switch
+    hass.data.setdefault("perplexity_assistant_switches", {})["voice_notification_switch"] = voice_notification_switch
+    hass.data.setdefault("perplexity_assistant_switches", {})["web_search_switch"] = web_search_switch
+    hass.data.setdefault("perplexity_assistant_switches", {})["entity_actions_switch"] = entity_actions_switch
+    hass.data.setdefault("perplexity_assistant_switches", {})["entity_access_switch"] = entity_access_switch
 
 
 class VoiceNotificationSwitch(SwitchEntity, RestoreEntity):

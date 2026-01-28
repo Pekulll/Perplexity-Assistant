@@ -118,14 +118,12 @@
       "init": {
         "data": {
           "menu": "Kies de instellingen die je wilt wijzigen"
-        },
-            "api_key": "API-sleutel",
-            "max_credits_usage": "Maximaal kredietgebruik ($)"
+        }
       },
       "api": {
         "data": {
             "api_key": "API-sleutel",
-            "max_credits_usage": "Stel het maximale bedrag aan credits (in USD) in dat voor de Perplexity API mag worden gebruikt. Zodra deze limiet is bereikt, worden geen verdere verzoeken meer gedaan."
+            "max_credits_usage": "Maximaal kredietgebruik ($)"
         },
         "data_description": {
           "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

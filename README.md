@@ -127,7 +127,7 @@ actions:
       prompt: >-
         Give me a concise news report in simple but complete sentence. Include
         at two local news (from the country of the user) at first and one
-        international news. Only include the news in the respoinse not any other
+        international news. Only include the news in the response not any other
         sentence.
       execute_actions: false
       enable_websearch: true
@@ -181,7 +181,7 @@ Two diagnostic sensors are created:
 
 ## 🔘 Switches
 
-These toggles are available as swicthes. They control runtime behavior.
+These toggles are available as switches. They control runtime behavior.
 
 | Switch Name | Description |
 |-------------|-------------|
