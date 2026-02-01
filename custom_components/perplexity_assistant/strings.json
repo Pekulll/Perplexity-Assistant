@@ -54,7 +54,7 @@
                 "data_description": {
                     "allow_entities_access": "Allows the Perplexity Assistant to access exposed entities from your Home Assistant instance to provide more contextual responses.",
                     "entities_summary_refresh_rate": "Sets how often the Perplexity Assistant updates the summary of Home Assistant entities' states (in seconds).",
-                    "allow_actions_on_entities": "Allows the Perplexity Assistant to perform actions on Home Assistant entities, such as turning on lights or adjusting the thermostat.",
+                    "allow_actions_on_entities": "Allows the Perplexity Assistant to perform actions on exposed Home Assistant entities, such as turning on lights or adjusting the thermostat.",
                     "enable_web_search": "Enables the Perplexity Assistant's ability to perform web searches for up-to-date information, although this may sometimes reduce response relevance.",
                     "notify_response": "If enabled, the Perplexity Assistant will notify you of each response it generates.",
                     "enable_response_on_speakers": "Allows the Perplexity Assistant to play responses through speakers connected to Home Assistant, provided TTS is configured and Perplexity can precisely locate you.",

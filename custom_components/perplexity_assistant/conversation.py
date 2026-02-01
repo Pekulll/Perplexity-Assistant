@@ -127,10 +127,13 @@ class PerplexityAgent(AbstractConversationAgent):
         """Send a request to the Perplexity API.
 
         Args:
-            messages (list[dict]): The request payload.
+            user_messages (list[dict]): The request payload.
             username (str): The name of the user making the request.
+            prompt (str | None): The original user prompt.
+            override_model (str | None): Model to override the default with.
             force_web_search_access (bool): Whether to force web search access.
-            data_freshness (str | None): The freshness of the data requested.
+            data_recency (str | None): The recency of the data requested.
+            pass_entity_context (bool): Whether to include entity context.
         Returns:
             dict: The response from the Perplexity API.
         """
@@ -363,7 +366,7 @@ class PerplexityAgent(AbstractConversationAgent):
         
         HISTORY = " -- ".join([msg for msg in self._history if msg])
         HISTORY_PROMPT = f"{HISTORY}" if HISTORY else "No previous conversation history."
-        _LOGGER.warning(f"Sending request to Perplexity API with history: {HISTORY_PROMPT} | prompt: {prompt}")
+        _LOGGER.debug(f"Sending request to Perplexity API with history: {HISTORY_PROMPT} | prompt: {prompt}")
         
         user_messages: list[dict] = [ {"role": "user", "content": f"USER SYSTEM PROMPT: {self._get_config(CONF_CUSTOM_SYSTEM_PROMPT, '')} | CONVERSATION HISTORY: {HISTORY_PROMPT} | USER PROMPT: {prompt}"} ]
         data: dict = await self._async_send_request(user_messages, user_name, prompt=prompt)
