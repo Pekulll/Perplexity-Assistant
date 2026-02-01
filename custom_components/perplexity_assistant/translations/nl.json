@@ -10,7 +10,7 @@
           "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
           "max_credits_usage": "Stel het maximale bedrag aan credits (in USD) in dat voor de Perplexity API mag worden gebruikt. Zodra deze limiet is bereikt, worden geen verdere verzoeken meer gedaan."
         },
-        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -20,7 +20,7 @@
           "advanced_configuration": "Geavanceerde configuratie"
         },
         "data_description": {
-          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten]({api_cost_url})).",
           "language": "Kies de taal waarin Perplexity Assistant antwoordt.",
           "custom_system_prompt": "Geef aangepaste instructies om het gedrag van de assistant per verzoek te sturen."
         },

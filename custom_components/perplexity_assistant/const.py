@@ -25,6 +25,8 @@ CONF_FREQUENCY_PENALTY: str = "frequency_penalty"
 
 # Perplexity API endpoint
 BASE_URL: str = "https://api.perplexity.ai/chat/completions"
+GENERATE_API_KEY_URL: str = "https://www.perplexity.ai/account/api/keys"
+API_COST_URL: str = "https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost"
 
 # Supported models and languages
 SUPPORTED_MODELS: list[dict] = [

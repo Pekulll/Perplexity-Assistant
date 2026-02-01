@@ -10,7 +10,7 @@
           "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
           "max_credits_usage": "Perplexity API に使用できるクレジットの上限額 (USD) を設定します。この上限に達すると、それ以上のリクエストは実行されません。"
         },
-        "description": "Perplexity Assistantを使用するには、[Perplexity](https://www.perplexity.ai/account/api/keys)でAPIキーを生成してください。"
+        "description": "Perplexity Assistantを使用するには、[Perplexity]({generate_api_key_url})でAPIキーを生成してください。"
       },
       "model": {
         "data": {
@@ -20,7 +20,7 @@
           "advanced_configuration": "高度な設定"
         },
         "data_description": {
-          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります (詳細: [APIコスト](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)）。",
+          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります (詳細: [APIコスト]({api_cost_url})）。",
           "language": "Perplexity Assistantが応答する言語を選択します。",
           "custom_system_prompt": "各リクエストでのアシスタントの動作を誘導するためのカスタム指示を提供します。"
         },

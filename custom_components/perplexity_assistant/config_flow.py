@@ -63,7 +63,7 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         })
         
         # Otherwise, show the form
-        return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors,)
+        return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors, description_placeholders={"generate_api_key_url": GENERATE_API_KEY_URL},)
     
     async def async_step_model(self, user_input: dict[str, any] | None = None) -> config_entries.ConfigFlowResult:
         """Second step of the flow: prompts the user for the model.
@@ -105,7 +105,7 @@ class PerplexityConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.data.update(user_input)
                 return await self.async_step_authorization()
             
-        return self.async_show_form(step_id="model", data_schema=STEP_USER_DATA_SCHEMA, last_step=True,)
+        return self.async_show_form(step_id="model", data_schema=STEP_USER_DATA_SCHEMA, last_step=True, description_placeholders={"api_cost_url": API_COST_URL},)
     
     
     async def async_step_model_parameters(self, user_input: dict[str, any] | None = None) -> config_entries.ConfigFlowResult:
@@ -245,7 +245,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Required(CONF_MAX_CREDITS_USAGE, default=current_max_credits_usage): NumberSelector({"min": 0, "step": 0.1, "mode": "box", "unit_of_measurement": "$", "max": 100}),
         })
 
-        return self.async_show_form(step_id="api", data_schema=options_schema, errors=errors,)
+        return self.async_show_form(step_id="api", data_schema=options_schema, errors=errors, description_placeholders={"generate_api_key_url": GENERATE_API_KEY_URL},)
     
     async def async_step_model(self, user_input: dict[str, any] | None = None) -> config_entries.ConfigFlowResult:
         """Manage the options step.
@@ -288,7 +288,7 @@ class PerplexityOptionsFlowHandler(config_entries.OptionsFlow):
             options.update(user_input)
             return self.async_create_entry(title="", data=options)
 
-        return self.async_show_form(step_id="model", data_schema=options_schema,)
+        return self.async_show_form(step_id="model", data_schema=options_schema, description_placeholders={"api_cost_url": API_COST_URL},)
     
     async def async_step_model_parameters(self, user_input: dict[str, any] | None = None) -> config_entries.ConfigFlowResult:
         """Manage the options step.
