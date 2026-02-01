@@ -129,7 +129,7 @@
           "api_key": "La chiave API fornita verrà utilizzata per autenticare le richieste al servizio Perplexity AI. Formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
           "max_credits_usage": "Imposta l'importo massimo di crediti (in USD) utilizzabile per l'API di Perplexity. Raggiunto questo limite, non verranno effettuate ulteriori richieste."
         },
-        "description": "Per usare Perplexity Assistant, genera una chiave API da [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Per usare Perplexity Assistant, genera una chiave API da [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -138,7 +138,7 @@
           "custom_system_prompt": "Prompt di sistema personalizzato"
         },
         "data_description": {
-          "model": "Seleziona il modello da utilizzare per Perplexity Assistant. I costi possono variare in base al modello scelto (ulteriori informazioni: [Costo API](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Seleziona il modello da utilizzare per Perplexity Assistant. I costi possono variare in base al modello scelto (ulteriori informazioni: [Costo API]({api_cost_url})).",
           "language": "Scegli la lingua in cui risponderà Perplexity Assistant.",
           "custom_system_prompt": "Fornisci istruzioni personalizzate per guidare il comportamento dell'assistente ad ogni richiesta."
         },
