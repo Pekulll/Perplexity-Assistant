@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "APIキー"
+          "api_key": "APIキー",
+          "max_credits_usage": "クレジット使用上限 ($)"
         },
         "data_description": {
-          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API に使用できるクレジットの上限額 (USD) を設定します。この上限に達すると、それ以上のリクエストは実行されません。"
         },
-        "description": "Perplexity Assistantを使用するには、[Perplexity](https://www.perplexity.ai/account/api/keys)でAPIキーを生成してください。"
+        "description": "Perplexity Assistantを使用するには、[Perplexity]({generate_api_key_url})でAPIキーを生成してください。"
       },
       "model": {
         "data": {
@@ -18,7 +20,7 @@
           "advanced_configuration": "高度な設定"
         },
         "data_description": {
-          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります (詳細: [APIコスト](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)）。",
+          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります (詳細: [APIコスト]({api_cost_url})）。",
           "language": "Perplexity Assistantが応答する言語を選択します。",
           "custom_system_prompt": "各リクエストでのアシスタントの動作を誘導するためのカスタム指示を提供します。"
         },
@@ -72,6 +74,18 @@
       "single_instance_allowed": "Perplexity Assistantのインスタンスは1つのみ許可されます。"
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "月額コスト" },
+      "total_cost": { "name": "合計コスト" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "音声通知" },
+      "web_search": { "name": "ウェブ検索" },
+      "entity_actions": { "name": "エンティティ操作" },
+      "entity_access": { "name": "エンティティへのアクセス" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {
@@ -89,6 +103,14 @@
         "model_parameters": "モデルパラメータ",
         "authorization": "権限 & 許可"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "過去1日",
+        "week": "過去1週間",
+        "month": "過去1か月",
+        "year": "過去1年"
+      }
     }
   },
   "options": {
@@ -100,12 +122,14 @@
       },
       "api": {
         "data": {
-          "api_key": "APIキー"
+          "api_key": "APIキー",
+          "max_credits_usage": "クレジット使用上限 ($)"
         },
         "data_description": {
-          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "指定されたAPIキーはPerplexity AIサービスへのリクエスト認証に使用されます。形式: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Perplexity API に使用できるクレジットの上限額 (USD) を設定します。この上限に達すると、それ以上のリクエストは実行されません。"
         },
-        "description": "Perplexity Assistantを使用するには、[Perplexity](https://www.perplexity.ai/account/api/keys)でAPIキーを生成してください。"
+        "description": "Perplexity Assistantを使用するには、[Perplexity]({generate_api_key_url})でAPIキーを生成してください。"
       },
       "model": {
         "data": {
@@ -114,7 +138,7 @@
           "custom_system_prompt": "カスタムシステムプロンプト"
         },
         "data_description": {
-          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります（詳細: [APIコスト](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)）。",
+          "model": "使用するPerplexity Assistantのモデルを選択します。モデルによりコストが異なる場合があります（詳細: [APIコスト]({api_cost_url})）。",
           "language": "Perplexity Assistantが応答する言語を選択します。",
           "custom_system_prompt": "各リクエストでのアシスタントの動作を誘導するためのカスタム指示を提供します。"
         },
@@ -183,6 +207,14 @@
         "force_actions_execution": {
           "name": "アクションの実行を強制",
           "description": "警告: 設定を上書きします。有効な場合、応答内で検出されたアクションが自動的に実行されます。"
+        },
+        "pass_entity_context": {
+            "name": "エンティティコンテキストを渡す",
+            "description": "有効にすると、このリクエストは統合設定でエンティティアクセスが有効になっている場合に、公開されている Home Assistant エンティティのコンテキストにアクセスできます。"
+        },
+        "data_recency": {
+          "name": "データの新しさ",
+          "description": "Web 検索で使用するデータの新しさを指定します。選択肢は 'day'、'week'、'month'、'year' です。未指定の場合は 'day' が既定です。"
         }
       }
     }

@@ -6,6 +6,7 @@ DOMAIN: str = "perplexity_assistant"
 
 # Configuration and option keys
 CONF_API_KEY: str = "api_key"
+CONF_MAX_CREDITS_USAGE: str = "max_credits_usage"
 CONF_MODEL: str = "model"
 CONF_LANGUAGE: str = "language"
 CONF_CUSTOM_SYSTEM_PROMPT: str = "custom_system_prompt"
@@ -24,6 +25,8 @@ CONF_FREQUENCY_PENALTY: str = "frequency_penalty"
 
 # Perplexity API endpoint
 BASE_URL: str = "https://api.perplexity.ai/chat/completions"
+GENERATE_API_KEY_URL: str = "https://www.perplexity.ai/account/api/keys"
+API_COST_URL: str = "https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#-api-cost"
 
 # Supported models and languages
 SUPPORTED_MODELS: list[dict] = [
@@ -47,6 +50,7 @@ SUPPORTED_LANGUAGES: list[dict] = [
 ]
 
 # Default configuration values
+DEFAULT_MAX_CREDITS_USAGE: float = 5.0  # in USD
 DEFAULT_MODEL: str = "sonar"
 DEFAULT_LANGUAGE: str = "en"
 DEFAULT_ALLOW_ENTITIES_ACCESS: bool = True
@@ -55,7 +59,7 @@ DEFAULT_NOTIFY_RESPONSE: bool = False
 DEFAULT_ENABLE_WEBSEARCH: bool = False
 DEFAULT_ENABLE_RESPONSE_ON_SPEAKERS: bool = True
 DEFAULT_ENTITIES_SUMMARY_REFRESH_RATE: int = 10 # in seconds
-DEFAULT_TTS: str = "tts.piper"
+DEFAULT_TTS: str = "tts.google_translate_en_com"
 
 DEFAULT_MAX_TOKENS: int = 500               # Limit response length
 DEFAULT_CREATIVITY: float = 0.9             # Control creativity         0.1=more factual, 0.9=more creative

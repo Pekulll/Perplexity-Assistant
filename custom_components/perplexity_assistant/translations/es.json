@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "Clave API"
+          "api_key": "Clave API",
+          "max_credits_usage": "Uso máximo de créditos ($)"
         },
         "data_description": {
-          "api_key": "La clave de API proporcionada se utilizará para autenticar las solicitudes al servicio Perplexity AI. Tiene el formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "La clave de API proporcionada se utilizará para autenticar las solicitudes al servicio Perplexity AI. Tiene el formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Establece la cantidad máxima de créditos (en USD) que se puede usar para la API de Perplexity. Una vez alcanzado este límite, no se realizarán más solicitudes."
         },
-        "description": "Para usar Perplexity Assistant, debes generar una clave API en [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Para usar Perplexity Assistant, debes generar una clave API en [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -18,7 +20,7 @@
           "advanced_configuration": "Configuración avanzada"
         },
         "data_description": {
-          "model": "Selecciona el modelo que utilizará Perplexity Assistant. Los costes asociados pueden variar según el modelo elegido (más información: [Coste de la API](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Selecciona el modelo que utilizará Perplexity Assistant. Los costes asociados pueden variar según el modelo elegido (más información: [Coste de la API]({api_cost_url})).",
           "language": "Elige el idioma en el que responderá Perplexity Assistant.",
           "custom_system_prompt": "Proporciona instrucciones personalizadas para guiar el comportamiento de Perplexity Assistant en cada solicitud."
         },
@@ -72,6 +74,18 @@
       "single_instance_allowed": "Solo se permite una única instancia de Perplexity Assistant."
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "Costo mensual" },
+      "total_cost": { "name": "Costo total" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "Notificaciones de voz" },
+      "web_search": { "name": "Búsqueda web" },
+      "entity_actions": { "name": "Acciones sobre entidades" },
+      "entity_access": { "name": "Acceso a entidades" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {
@@ -89,6 +103,14 @@
         "model_parameters": "Parámetros del modelo",
         "authorization": "Autorizaciones & Permisos"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "Último día",
+        "week": "Última semana",
+        "month": "Último mes",
+        "year": "Último año"
+      }
     }
   },
   "options": {
@@ -100,12 +122,14 @@
       },
       "api": {
         "data": {
-          "api_key": "Clave API"
+          "api_key": "Clave API",
+          "max_credits_usage": "Uso máximo de créditos ($)"
         },
         "data_description": {
-          "api_key": "La clave de API proporcionada se utilizará para autenticar las solicitudes al servicio Perplexity AI. Tiene el formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "La clave de API proporcionada se utilizará para autenticar las solicitudes al servicio Perplexity AI. Tiene el formato: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Establece la cantidad máxima de créditos (en USD) que se puede usar para la API de Perplexity. Una vez alcanzado este límite, no se realizarán más solicitudes."
         },
-        "description": "Para usar Perplexity Assistant, debes generar una clave API en [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Para usar Perplexity Assistant, debes generar una clave API en [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -114,7 +138,7 @@
           "custom_system_prompt": "Indicaciones del sistema personalizadas"
         },
         "data_description": {
-          "model": "Selecciona el modelo que utilizará Perplexity Assistant. Los costes asociados pueden variar según el modelo elegido (más información: [Coste de la API](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Selecciona el modelo que utilizará Perplexity Assistant. Los costes asociados pueden variar según el modelo elegido (más información: [Coste de la API]({api_cost_url})).",
           "language": "Elige el idioma en el que responderá Perplexity Assistant.",
           "custom_system_prompt": "Proporciona instrucciones personalizadas para guiar el comportamiento de Perplexity Assistant en cada solicitud."
         },
@@ -183,6 +207,14 @@
         "force_actions_execution": {
           "name": "Forzar ejecución de acciones",
           "description": "ADVERTENCIA: SOBRESCRIBE LA CONFIGURACIÓN. Si se activa, las acciones detectadas en la respuesta se ejecutarán automáticamente."
+        },
+        "pass_entity_context": {
+            "name": "Pasar contexto de entidad",
+            "description": "Si está activado, permite que esta solicitud acceda al contexto de las entidades expuestas de Home Assistant si el acceso a entidades está habilitado en la configuración de la integración."
+        },
+        "data_recency": {
+          "name": "Antigüedad de los datos",
+          "description": "Especifica la antigüedad de los datos a usar en las búsquedas web. Las opciones incluyen 'day', 'week', 'month', 'year'. Si no se especifica, el valor por defecto es 'day'."
         }
       }
     }

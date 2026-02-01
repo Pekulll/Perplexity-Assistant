@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "API-sleutel"
+          "api_key": "API-sleutel",
+          "max_credits_usage": "Maximaal kredietgebruik ($)"
         },
         "data_description": {
-          "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Stel het maximale bedrag aan credits (in USD) in dat voor de Perplexity API mag worden gebruikt. Zodra deze limiet is bereikt, worden geen verdere verzoeken meer gedaan."
         },
-        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -18,7 +20,7 @@
           "advanced_configuration": "Geavanceerde configuratie"
         },
         "data_description": {
-          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten]({api_cost_url})).",
           "language": "Kies de taal waarin Perplexity Assistant antwoordt.",
           "custom_system_prompt": "Geef aangepaste instructies om het gedrag van de assistant per verzoek te sturen."
         },
@@ -72,6 +74,18 @@
       "single_instance_allowed": "Slechts één instantie van Perplexity Assistant is toegestaan."
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "Maandelijkse kosten" },
+      "total_cost": { "name": "Totale kosten" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "Spraakmeldingen" },
+      "web_search": { "name": "Webzoekopdracht" },
+      "entity_actions": { "name": "Entiteitshandelingen" },
+      "entity_access": { "name": "Toegang tot entiteiten" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {
@@ -89,6 +103,14 @@
         "model_parameters": "Modelparameters",
         "authorization": "Autorisaties & Machtigingen"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "Afgelopen dag",
+        "week": "Afgelopen week",
+        "month": "Afgelopen maand",
+        "year": "Afgelopen jaar"
+      }
     }
   },
   "options": {
@@ -100,12 +122,14 @@
       },
       "api": {
         "data": {
-          "api_key": "API-sleutel"
+            "api_key": "API-sleutel",
+            "max_credits_usage": "Maximaal kredietgebruik ($)"
         },
         "data_description": {
-          "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "De opgegeven API-sleutel wordt gebruikt om verzoeken bij de Perplexity AI-service te authenticeren. Formaat: pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "Stel het maximale bedrag aan credits (in USD) in dat voor de Perplexity API mag worden gebruikt. Zodra deze limiet is bereikt, worden geen verdere verzoeken meer gedaan."
         },
-        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity](https://www.perplexity.ai/account/api/keys)."
+        "description": "Om Perplexity Assistant te gebruiken, genereer je een API-sleutel via [Perplexity]({generate_api_key_url})."
       },
       "model": {
         "data": {
@@ -114,7 +138,7 @@
           "custom_system_prompt": "Aangepaste systeemprompt"
         },
         "data_description": {
-          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)).",
+          "model": "Selecteer het model voor Perplexity Assistant. De kosten kunnen variëren afhankelijk van het gekozen model (meer info: [API-kosten]({api_cost_url})).",
           "language": "Kies de taal waarin Perplexity Assistant antwoordt.",
           "custom_system_prompt": "Geef aangepaste instructies om het gedrag van de assistant per verzoek te sturen."
         },
@@ -183,6 +207,14 @@
         "force_actions_execution": {
           "name": "Uitvoering van acties afdwingen",
           "description": "WAARSCHUWING: OVERSCHRIJFT CONFIGURATIE. Indien ingeschakeld worden gedetecteerde acties in het antwoord automatisch uitgevoerd."
+        },
+        "pass_entity_context": {
+            "name": "Entiteitscontext doorgeven",
+            "description": "Indien ingeschakeld, kan deze aanvraag toegang krijgen tot de context van blootgestelde Home Assistant-entiteiten als entiteitstoegang is ingeschakeld in de integratieconfiguratie."
+        },
+        "data_recency": {
+          "name": "Actualiteit van gegevens",
+          "description": "Specificeer de actualiteit van gegevens voor webzoekopdrachten. Opties zijn 'day', 'week', 'month', 'year'. Indien niet opgegeven is de standaard 'day'."
         }
       }
     }

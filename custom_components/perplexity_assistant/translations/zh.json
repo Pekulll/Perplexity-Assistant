@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "data": {
-          "api_key": "API 密钥"
+          "api_key": "API 密钥",
+          "max_credits_usage": "最大额度使用 ($)"
         },
         "data_description": {
-          "api_key": "提供的 API 密钥用于对 Perplexity AI 服务的请求进行身份验证。格式：pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "提供的 API 密钥用于对 Perplexity AI 服务的请求进行身份验证。格式：pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "设置可用于 Perplexity API 的最大额度（美元）。达到该上限后，将不再发送请求。"
         },
-        "description": "要使用 Perplexity Assistant，请在 [Perplexity](https://www.perplexity.ai/account/api/keys) 生成 API 密钥。"
+        "description": "要使用 Perplexity Assistant，请在 [Perplexity]({generate_api_key_url}) 生成 API 密钥。"
       },
       "model": {
         "data": {
@@ -18,7 +20,7 @@
           "advanced_configuration": "高级配置"
         },
         "data_description": {
-          "model": "选择用于 Perplexity Assistant 的模型。相关费用可能因所选模型而异（更多信息：[API 成本](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)）。",
+          "model": "选择用于 Perplexity Assistant 的模型。相关费用可能因所选模型而异（更多信息：[API 成本]({api_cost_url})）。",
           "language": "选择 Perplexity Assistant 的应答语言。",
           "custom_system_prompt": "提供自定义指令，以便针对每次请求引导助手的行为。"
         },
@@ -72,6 +74,18 @@
       "single_instance_allowed": "仅允许一个 Perplexity Assistant 实例。"
     }
   },
+  "entity": {
+    "sensor": {
+      "monthly_bill": { "name": "每月费用" },
+      "total_cost": { "name": "总费用" }
+    },
+    "switch": {
+      "voice_notifications": { "name": "语音通知" },
+      "web_search": { "name": "网页搜索" },
+      "entity_actions": { "name": "实体操作" },
+      "entity_access": { "name": "实体访问" }
+    }
+  },
   "selector": {
     "model_options": {
       "options": {
@@ -89,6 +103,14 @@
         "model_parameters": "模型参数",
         "authorization": "授权 & 权限"
       }
+    },
+    "data_recency_options": {
+      "options": {
+        "day": "过去一天",
+        "week": "过去一周",
+        "month": "过去一月",
+        "year": "过去一年"
+      }
     }
   },
   "options": {
@@ -100,12 +122,14 @@
       },
       "api": {
         "data": {
-          "api_key": "API 密钥"
+          "api_key": "API 密钥",
+          "max_credits_usage": "最大额度使用 ($)"
         },
         "data_description": {
-          "api_key": "提供的 API 密钥用于对 Perplexity AI 服务的请求进行身份验证。格式：pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          "api_key": "提供的 API 密钥用于对 Perplexity AI 服务的请求进行身份验证。格式：pplx-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "max_credits_usage": "设置可用于 Perplexity API 的最大额度（美元）。达到该上限后，将不再发送请求。"
         },
-        "description": "要使用 Perplexity Assistant，请在 [Perplexity](https://www.perplexity.ai/account/api/keys) 生成 API 密钥。"
+        "description": "要使用 Perplexity Assistant，请在 [Perplexity]({generate_api_key_url}) 生成 API 密钥。"
       },
       "model": {
         "data": {
@@ -114,7 +138,7 @@
           "custom_system_prompt": "自定义系统提示"
         },
         "data_description": {
-          "model": "选择用于 Perplexity Assistant 的模型。相关费用可能因所选模型而异（更多信息：[API 成本](https://github.com/Pekulll/Perplexity-Assistant?tab=readme-ov-file#3-api-cost)）。",
+          "model": "选择用于 Perplexity Assistant 的模型。相关费用可能因所选模型而异（更多信息：[API 成本]({api_cost_url})）。",
           "language": "选择 Perplexity Assistant 的应答语言。",
           "custom_system_prompt": "提供自定义指令，以便针对每次请求引导助手的行为。"
         },
@@ -183,6 +207,14 @@
         "force_actions_execution": {
           "name": "强制执行操作",
           "description": "警告：覆盖配置。启用后，响应中检测到的操作将自动执行。"
+        },
+        "pass_entity_context": {
+            "name": "传递实体上下文",
+            "description": "如果启用，允许此请求访问暴露的 Home Assistant 实体的上下文（如果在集成配置中启用了实体访问）。"
+        },
+        "data_recency": {
+          "name": "数据新近度",
+          "description": "指定用于网页搜索的数据新近度。选项包括 'day'、'week'、'month'、'year'。若未指定，默认值为 'day'。"
         }
       }
     }

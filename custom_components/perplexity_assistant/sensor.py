@@ -15,7 +15,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity import EntityCategory, DeviceInfo
 
 from .const import DOMAIN
 
@@ -35,10 +35,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class MonthlyBillSensor(SensorEntity, RestoreEntity):
     """Sensor representing remaining Perplexity credits (placeholder)."""
-    _attr_icon = "mdi:robot"
+    _attr_icon = "mdi:currency-usd"
     _attr_native_unit_of_measurement = "$"
+    _attr_has_entity_name = True
+    _attr_translation_key = "monthly_bill"
     
-    _attr_name = "Monthly Cost"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
@@ -47,6 +48,7 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
         self._attr_unique_id = f"{DOMAIN}_perplexity_monthly_bill"
         self._attr_native_value = 0.0
         self._last_reset = datetime.now().replace(day=1, hour=0, minute=0, second=0)
+        self._attr_extra_state_attributes = {"last_reset_month": self._last_reset}
 
     async def async_added_to_hass(self):
         """Restore previous state when HA restarts."""
@@ -65,6 +67,8 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
                     self._last_reset = datetime.fromisoformat(last_attrs["last_reset_month"])
                 except Exception:
                     _LOGGER.warning("Failed to parse last_reset timestamp")
+            
+            self._attr_extra_state_attributes = {"last_reset_month": self._last_reset}
         else:
             self._attr_native_value = 0.0
             self._last_reset = datetime.now().replace(day=1, hour=0, minute=0, second=0)
@@ -75,6 +79,11 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
     @property
     def native_value(self) -> float:
         """Return the native value of the sensor."""
+        now = datetime.now()
+
+        if now.month != self._last_reset.month or now.year != self._last_reset.year:
+            return 0.0
+            
         return round(self._attr_native_value, 4)
     
     @property
@@ -83,15 +92,24 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
         return f"{self._entry_id}_perplexity_monthly_bill"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return "Perplexity Monthly Bill"
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry_id)},
+            name="Perplexity Assistant",
+            manufacturer="Perplexity AI",
+            model="Perplexity API",
+        )
 
-    def increment_cost(self, cost: float):
-        """Add cost to current month."""
-        if datetime.now().month != self._last_reset.month:
-            self.reset_monthly_cost()
-            
+    def increment_cost(self, cost: float) -> None:
+        """Add cost to current monthly cost, with physical reset if month changed."""
+        now = datetime.now()
+        
+        if now.month != self._last_reset.month or now.year != self._last_reset.year:
+            self._attr_native_value = 0.0
+            self._last_reset = now.replace(day=1, hour=0, minute=0, second=0)
+            self._attr_extra_state_attributes = {"last_reset_month": self._last_reset}
+
         self._attr_native_value += cost
         self.async_write_ha_state()
 
@@ -106,10 +124,11 @@ class MonthlyBillSensor(SensorEntity, RestoreEntity):
 
 class AlltimeBillSensor(SensorEntity, RestoreEntity):
     """Sensor representing remaining Perplexity credits (placeholder)."""
-    _attr_icon = "mdi:robot"
+    _attr_icon = "mdi:currency-usd"
     _attr_native_unit_of_measurement = "$"
+    _attr_has_entity_name = True
+    _attr_translation_key = "total_cost"
     
-    _attr_name = "Total Cost"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
@@ -143,9 +162,14 @@ class AlltimeBillSensor(SensorEntity, RestoreEntity):
         return f"{self._entry_id}_perplexity_bill"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return "Perplexity Bill"
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry_id)},
+            name="Perplexity Assistant",
+            manufacturer="Perplexity AI",
+            model="Perplexity API",
+        )
 
     def increment_cost(self, cost: float):
         """Add cost to current cost."""
